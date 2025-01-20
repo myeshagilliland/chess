@@ -29,6 +29,14 @@ public class RookMove {
 //        return startPosition;
 //    }
 
+    public void checkPosition (ChessPosition myPosition, ChessPosition possiblePosition) {
+        if (chessBoard.getPiece(possiblePosition) != null) {
+            moves.add(possiblePosition);
+        } else if (chessBoard.getPiece(possiblePosition).getTeamColor() == chessBoard.getPiece(myPosition).getTeamColor()) {
+            moves.add(possiblePosition);
+        } //else {break;} THINK THIS THROUGH
+    }
+
     /**
      * @return ChessPosition of ending location
      */
@@ -42,9 +50,42 @@ public class RookMove {
 //            throw new IllegalArgumentException("Piece type must be Rook");
 //        }
 
-//        ChessPosition next_square = myPosition;
-//        for (square in myBoard.   [col][row+1:])
-
+        // forward
+        for (int i = col+1; i <= 8; i++) {
+            ChessPosition possiblePosition = new ChessPosition(row, i);
+            if (chessBoard.getPiece(possiblePosition) != null) {
+                moves.add(possiblePosition);
+            } else if (chessBoard.getPiece(possiblePosition).getTeamColor() == chessBoard.getPiece(myPosition).getTeamColor()) {
+                moves.add(possiblePosition);
+            } else {break;}
+        }
+        // backward
+        for (int i = col-1; i >= 1; i--) {
+            ChessPosition possiblePosition = new ChessPosition(row, i);
+            if (chessBoard.getPiece(possiblePosition) != null) {
+                moves.add(possiblePosition);
+            } else if (chessBoard.getPiece(possiblePosition).getTeamColor() == chessBoard.getPiece(myPosition).getTeamColor()) {
+                moves.add(possiblePosition);
+            } else {break;}
+        }
+        // right
+        for (int i = row+1; i <= 8; i++) {
+            ChessPosition possiblePosition = new ChessPosition(i, col);
+            if (chessBoard.getPiece(possiblePosition) != null) {
+                moves.add(possiblePosition);
+            } else if (chessBoard.getPiece(possiblePosition).getTeamColor() == chessBoard.getPiece(myPosition).getTeamColor()) {
+                moves.add(possiblePosition);
+            } else {break;}
+        }
+        // left
+        for (int i = row-1; i >= 1; i--) {
+            ChessPosition possiblePosition = new ChessPosition(i, col);
+            if (chessBoard.getPiece(possiblePosition) != null) {
+                moves.add(possiblePosition);
+            } else if (chessBoard.getPiece(possiblePosition).getTeamColor() == chessBoard.getPiece(myPosition).getTeamColor()) {
+                moves.add(possiblePosition);
+            } else {break;}
+        }
         return moves;
     }
 
