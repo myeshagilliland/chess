@@ -57,6 +57,12 @@ public class ChessPiece {
         var moves = new ArrayList<ChessMove>();
         if (board.getPiece(myPosition).getPieceType() == ChessPiece.PieceType.ROOK) {
             return new RookMove(board, myPosition).getMoves();
+        } else if (board.getPiece(myPosition).getPieceType() == ChessPiece.PieceType.BISHOP) {
+            return new BishopMove(board, myPosition).getMoves();
+        } else if (board.getPiece(myPosition).getPieceType() == ChessPiece.PieceType.QUEEN) {
+            return new QueenMove(board, myPosition).getMoves();
+        } else if (board.getPiece(myPosition).getPieceType() == ChessPiece.PieceType.KING) {
+            return new KingMove(board, myPosition).getMoves();
         }
         return moves;
     }
