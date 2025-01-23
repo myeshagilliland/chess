@@ -34,10 +34,6 @@ public class ChessPosition {
         return col;
     }
 
-    public ChessPosition advance(int rowDirection, int colDirection) {
-        return new ChessPosition(row + rowDirection, col + colDirection);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
