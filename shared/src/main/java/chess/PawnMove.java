@@ -10,7 +10,6 @@ public class PawnMove {
 
     private ChessBoard chessBoard;
     private ChessPosition myPosition;
-    private ChessPiece.PieceType promotionType;
     private Collection<ChessMove> moves = new ArrayList<ChessMove>(); //handle null case
 
     public PawnMove(ChessBoard board, ChessPosition myPosition) {
@@ -47,7 +46,7 @@ public class PawnMove {
         return true;
     }
 
-    public void moveCheckPromote (ChessPosition possiblePosition, ChessGame.TeamColor team, ChessPiece.PieceType promotionType) {
+    public void moveCheckPromote (ChessPosition possiblePosition, ChessGame.TeamColor team) {
         int row = possiblePosition.getRow();
         if ((row == 8 && team == ChessGame.TeamColor.WHITE) || (row == 1 && team == ChessGame.TeamColor.BLACK)) {
             moves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.ROOK));
@@ -76,17 +75,17 @@ public class PawnMove {
             possiblePosition = new ChessPosition(row - 1, col);
         }
         if (onBoard(possiblePosition) && chessBoard.getPiece(possiblePosition) == null) {
-            moveCheckPromote(possiblePosition, team, null);
+            moveCheckPromote(possiblePosition, team);
             //forward 2
             if ((team == ChessGame.TeamColor.WHITE && row == 2)) {
                 possiblePosition = new ChessPosition(row + 2, col);
                 if (onBoard(possiblePosition) && chessBoard.getPiece(possiblePosition) == null) {
-                    moveCheckPromote(possiblePosition, team, null);
+                    moveCheckPromote(possiblePosition, team);
                 }
             } else if (team == ChessGame.TeamColor.BLACK && row == 7) {
                 possiblePosition = new ChessPosition(row - 2, col);
                 if (onBoard(possiblePosition) && chessBoard.getPiece(possiblePosition) == null) {
-                    moveCheckPromote(possiblePosition, team, null);
+                    moveCheckPromote(possiblePosition, team);
                 }
             }
 
@@ -99,7 +98,7 @@ public class PawnMove {
             possiblePosition = new ChessPosition(row - 1, col - 1);
         }
         if (onBoard(possiblePosition) && chessBoard.getPiece(possiblePosition) != null && chessBoard.getPiece(possiblePosition).getTeamColor() != team) {
-            moveCheckPromote(possiblePosition, team, null);
+            moveCheckPromote(possiblePosition, team);
         }
         //right diagonal capture
         if (team == ChessGame.TeamColor.WHITE) {
@@ -108,7 +107,7 @@ public class PawnMove {
             possiblePosition = new ChessPosition(row - 1, col + 1);
         }
         if (onBoard(possiblePosition) && chessBoard.getPiece(possiblePosition) != null && chessBoard.getPiece(possiblePosition).getTeamColor() != team) {
-            moveCheckPromote(possiblePosition, team, null);
+            moveCheckPromote(possiblePosition, team);
         }
 
         return moves;
