@@ -93,9 +93,9 @@ public class ChessGame {
         } else {
             board.addPiece(move.getStartPosition(), null); //remove old piece
 
-            if (myPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                ChessPiece.PieceType promotionType = move.getPromotionPiece();
-                ChessPiece promotionPiece = new ChessPiece(team, promotionType);
+            if (myPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
+//                ChessPiece.PieceType promotionType = move.getPromotionPiece();
+                ChessPiece promotionPiece = new ChessPiece(team, move.getPromotionPiece());
                 board.addPiece(move.getEndPosition(), promotionPiece);
             } else {
                 board.addPiece(move.getEndPosition(), myPiece);
