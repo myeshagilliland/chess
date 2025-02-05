@@ -64,6 +64,13 @@ public class ChessGame {
         }
 
         Collection<ChessMove> possibleMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
+
+        //remove if in check
+        for (ChessMove move:possibleMoves){
+//            ChessBoard testBoard = new board.copy();
+
+
+        }
         return possibleMoves;
     }
 
@@ -175,7 +182,24 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessPosition> piecePositions;
+        if (teamColor == TeamColor.WHITE) {
+            piecePositions = whitePiecePositions;
+        } else {
+            piecePositions = blackPiecePositions;
+        }
+
+        for (ChessPosition piecePosition:piecePositions) {
+            if (validMoves(piecePosition) != null && !validMoves(piecePosition).isEmpty()) {
+                return false;
+            }
+        }
+
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
