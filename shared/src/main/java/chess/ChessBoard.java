@@ -99,4 +99,21 @@ public class ChessBoard {
                 "chessBoard=" + Arrays.toString(chessBoard) +
                 '}';
     }
+
+    @Override
+    public ChessBoard clone() {
+        ChessBoard copyBoard = new ChessBoard();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece oldPiece = this.chessBoard[8-row][col-1];
+                ChessPiece newPiece = null;
+                if (oldPiece != null) {
+                    newPiece = oldPiece.clone();
+                }
+                copyBoard.chessBoard[8-row][col-1] = newPiece;
+
+            }
+        }
+        return copyBoard;
+    }
 }

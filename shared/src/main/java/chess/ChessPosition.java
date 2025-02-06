@@ -55,4 +55,9 @@ public class ChessPosition {
                 ", col=" + col +
                 '}';
     }
+
+    @Override
+    public ChessPosition clone() {
+        return new ChessPosition(row, col);
+    }
 }
