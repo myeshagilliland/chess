@@ -219,7 +219,25 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+
+        Collection<ChessPosition> piecePositions;
+        if (teamColor == TeamColor.WHITE) {
+            piecePositions = whitePiecePositions;
+        } else {
+            piecePositions = blackPiecePositions;
+        }
+
+        for (ChessPosition piecePosition:piecePositions) {
+            if (validMoves(piecePosition) != null && !validMoves(piecePosition).isEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
+//        throw new RuntimeException("Not implemented");
     }
 
     /**
