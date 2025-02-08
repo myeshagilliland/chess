@@ -137,9 +137,17 @@ public class ChessGame {
             throw new InvalidMoveException("Other team's turn");
         }
 
-//        if (isInCheck(team)) {
-//            throw new InvalidMoveException("In check");
-//        }
+        if (isInCheck(team)) {
+            throw new InvalidMoveException("In check");
+        }
+
+        if (isInCheckmate(team)) {
+            throw new InvalidMoveException("In checkmate");
+        }
+
+        if (isInStalemate(team)) {
+            throw new InvalidMoveException("In stalemate");
+        }
 
         if (!validPieceMoves.contains(move)) {
             throw new InvalidMoveException("Invalid move");
@@ -149,8 +157,16 @@ public class ChessGame {
             if (myPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
 //                ChessPiece.PieceType promotionType = move.getPromotionPiece();
                 ChessPiece promotionPiece = new ChessPiece(team, move.getPromotionPiece());
+                if (board.getPiece(move.getEndPosition()) != null) {
+                    whitePiecePositions.remove(move.getEndPosition());
+                    blackPiecePositions.remove(move.getEndPosition());
+                }
                 board.addPiece(move.getEndPosition(), promotionPiece);
             } else {
+                if (board.getPiece(move.getEndPosition()) != null) {
+                    whitePiecePositions.remove(move.getEndPosition());
+                    blackPiecePositions.remove(move.getEndPosition());
+                }
                 board.addPiece(move.getEndPosition(), myPiece);
             }
 
@@ -219,9 +235,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (!isInCheck(teamColor)) {
-            return false;
-        }
+//        if (!isInCheck(teamColor)) {
+//            return false;
+//        }
 
         Collection<ChessPosition> piecePositions;
         if (teamColor == TeamColor.WHITE) {
