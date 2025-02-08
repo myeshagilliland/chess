@@ -70,6 +70,8 @@ public class ChessGame {
         TeamColor team = board.getPiece(startPosition).getTeamColor();
         TeamColor otherTeam = board.getPiece(startPosition).getOtherTeamColor();
 
+        Collection<ChessMove> validMoves = new ArrayList<ChessMove>();
+
         for (ChessMove move:possibleMoves){
             //create new ChessBoard object
             ChessBoard testBoard = board.clone();
@@ -83,8 +85,8 @@ public class ChessGame {
             testGame.setTeamTurn(otherTeam);
             testGame.resetPiecesCollections();
 
-            if (testGame.isInCheck(team)) {
-                possibleMoves.remove(move);
+            if (!testGame.isInCheck(team)) {
+                validMoves.add(move);
             }
 
 //            possibleMoves.removeIf(testGame.isInCheck(team));
@@ -113,7 +115,8 @@ public class ChessGame {
 //            }
 //        }
 
-        return possibleMoves;
+//        return possibleMoves;
+        return validMoves;
     }
 
     /**
@@ -182,6 +185,8 @@ public class ChessGame {
 
         for (ChessPosition position:otherTeamPositions) {
             Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
+//            Collection<ChessMove> moves = validMoves(position);
+
             for (ChessMove move:moves) {
                 if (move.getEndPosition().equals(kingPosition)) {
                     return true;
@@ -225,6 +230,10 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
         Collection<ChessPosition> piecePositions;
         if (teamColor == TeamColor.WHITE) {
             piecePositions = whitePiecePositions;
@@ -236,10 +245,6 @@ public class ChessGame {
             if (validMoves(piecePosition) != null && !validMoves(piecePosition).isEmpty()) {
                 return false;
             }
-        }
-
-        if (isInCheck(teamColor)) {
-            return false;
         }
 
         return true;
