@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -24,7 +25,7 @@ public class ChessGame {
        defaultBoard.resetBoard();
        setBoard(defaultBoard);
        setTeamTurn(TeamColor.WHITE);
-       defaultPieces();
+//       resetPiecesCollections();
     }
 
     /**
@@ -65,12 +66,53 @@ public class ChessGame {
 
         Collection<ChessMove> possibleMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
 
-        //remove if in check
-        for (ChessMove move:possibleMoves){
-//            ChessBoard testBoard = new board.copy();
+        //remove if puts in check
+        TeamColor team = board.getPiece(startPosition).getTeamColor();
+        TeamColor otherTeam = board.getPiece(startPosition).getOtherTeamColor();
 
+        for (ChessMove move:possibleMoves){
+            //create new ChessBoard object
+            ChessBoard testBoard = board.clone();
+            ChessPiece myPiece = testBoard.getPiece(startPosition);
+            testBoard.addPiece(startPosition, null); //remove old piece
+            testBoard.addPiece(move.getEndPosition(), myPiece); //add to new
+
+            //create new ChessGame object
+            ChessGame testGame = new ChessGame();
+            testGame.setBoard(testBoard);
+            testGame.setTeamTurn(otherTeam);
+            testGame.resetPiecesCollections();
+
+            if (testGame.isInCheck(team)) {
+                possibleMoves.remove(move);
+            }
+
+//            possibleMoves.removeIf(testGame.isInCheck(team));
 
         }
+
+//        //if currently in check, remove move if it doesn't escape check
+//        if (isInCheck(team)) {
+//            for (ChessMove move:possibleMoves){
+//                //create new ChessBoard object
+//                ChessBoard testBoard = board.clone();
+//                ChessPiece myPiece = testBoard.getPiece(startPosition);
+//                testBoard.addPiece(startPosition, null); //remove old piece
+//                testBoard.addPiece(move.getEndPosition(), myPiece); //add to new
+//
+//                //create new ChessGame object
+//                ChessGame testGame = new ChessGame();
+//                testGame.setBoard(testBoard);
+//                testGame.setTeamTurn(otherTeam);
+//                testGame.resetPiecesCollections();
+//
+//                if (testGame.isInCheck(team)) {
+//                    possibleMoves.remove(move);
+//                }
+//
+//            }
+//        }
+
         return possibleMoves;
     }
 
@@ -82,7 +124,8 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece myPiece = board.getPiece(move.getStartPosition());
-        if (validMoves(move.getStartPosition()) == null) {
+        Collection<ChessMove> validPieceMoves = validMoves(move.getStartPosition());
+        if (validPieceMoves == null) {
             throw new InvalidMoveException("No piece at start position");
         }
 
@@ -95,7 +138,7 @@ public class ChessGame {
 //            throw new InvalidMoveException("In check");
 //        }
 
-        if (!validMoves(move.getStartPosition()).contains(move)) {
+        if (!validPieceMoves.contains(move)) {
             throw new InvalidMoveException("Invalid move");
         } else {
             board.addPiece(move.getStartPosition(), null); //remove old piece
@@ -140,7 +183,7 @@ public class ChessGame {
         for (ChessPosition position:otherTeamPositions) {
             Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
             for (ChessMove move:moves) {
-                if (move.getEndPosition() == kingPosition) {
+                if (move.getEndPosition().equals(kingPosition)) {
                     return true;
                 }
             }
@@ -209,6 +252,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
+        resetPiecesCollections();
     }
 
     /**
@@ -223,13 +267,34 @@ public class ChessGame {
     /**
      * initialize black/whitePieces and black/whiteKingPosition for default board
      */
-    public void defaultPieces() {
-        for (int row = 1; row <= 2; row++) {
-            for (int col = 1; col <=8; col++) {
-                whitePiecePositions.add(new ChessPosition(row, col));
-                blackPiecePositions.add(new ChessPosition(9-row, col));
+    public void resetPiecesCollections() {
+        whitePiecePositions.clear();
+        blackPiecePositions.clear();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece currentPiece = board.getPiece(new ChessPosition(row,col));
+                if (currentPiece != null) {
+                    if (currentPiece.getTeamColor() == TeamColor.WHITE) {
+                        whitePiecePositions.add(new ChessPosition(row, col));
+                        if (currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                            whiteKingPosition = new ChessPosition(row, col);
+                        }
+                    } else {
+                        blackPiecePositions.add(new ChessPosition(row, col));
+                        if (currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                            blackKingPosition = new ChessPosition(row, col);
+                        }
+                    }
+
+                }
             }
         }
+//        for (int row = 1; row <= 2; row++) {
+//            for (int col = 1; col <=8; col++) {
+//                whitePiecePositions.add(new ChessPosition(row, col));
+//                blackPiecePositions.add(new ChessPosition(9-row, col));
+//            }
+//        }
     }
 
     /**
@@ -238,8 +303,10 @@ public class ChessGame {
     public void updatePieces(ChessMove move) {
         //update pieces list
         if (blackPiecePositions.remove(move.getStartPosition())) {
+            blackPiecePositions.remove(move.getStartPosition());
             blackPiecePositions.add(move.getEndPosition());
         } else if (whitePiecePositions.remove(move.getStartPosition())) {
+            whitePiecePositions.remove(move.getStartPosition());
             whitePiecePositions.add(move.getEndPosition());
         }
 

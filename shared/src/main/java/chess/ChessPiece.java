@@ -40,6 +40,17 @@ public class ChessPiece {
     }
 
     /**
+     * @return Which team this chess piece belongs to
+     */
+    public ChessGame.TeamColor getOtherTeamColor() {
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            return ChessGame.TeamColor.BLACK;
+        } else {
+            return ChessGame.TeamColor.WHITE;
+        }
+    }
+
+    /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
@@ -77,7 +88,8 @@ public class ChessPiece {
             return false;
         }
         ChessPiece that = (ChessPiece) o;
-        return pieceColor == that.pieceColor && type == that.type;
+//        return pieceColor == that.pieceColor && type == that.type;
+        return getTeamColor() == that.getTeamColor() && getPieceType() == that.getPieceType();
     }
 
     @Override
