@@ -10,10 +10,7 @@ public interface UserDAO {
 //    void delete(username user);
 
     void create(UserData userData);
-
     UserData read(String username);
-
     void update(UserData userData);
-
     void delete(String username);
 }
