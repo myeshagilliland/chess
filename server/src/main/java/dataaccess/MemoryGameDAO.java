@@ -2,10 +2,11 @@ package dataaccess;
 
 import model.GameData;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO {
-    // gameID: userData (username, whiteUsername, blackUsername, gameName, game)
+    // gameID: gameData (gameID, whiteUsername, blackUsername, gameName, game)
     private HashMap<Integer, GameData> gameDatabase = new HashMap<Integer, GameData>();
 
     @Override
@@ -32,5 +33,10 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public void deleteGame(Integer gameID) {
         gameDatabase.remove(gameID);
+    }
+
+    @Override
+    public Collection<GameData> listGames() {
+        return gameDatabase.values();
     }
 }

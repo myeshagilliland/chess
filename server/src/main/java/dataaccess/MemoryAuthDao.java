@@ -5,20 +5,20 @@ import model.AuthData;
 import java.util.HashMap;
 
 public class MemoryAuthDao implements AuthDAO {
-    // username: userData (username, authToken)
+    // authToken: authData (authToken, username)
     private HashMap<String, AuthData> authDatabase = new HashMap<String, AuthData>();
 
     @Override
     public void createAuth(AuthData authData) throws DataAccessException {
-        if (findAuth(authData.username()) != null) {
+        if (findAuth(authData.authToken()) != null) {
             throw new DataAccessException("Username already authenticated");
         }
-        authDatabase.put(authData.username(), authData);
+        authDatabase.put(authData.authToken(), authData);
     }
 
     @Override
-    public AuthData findAuth(String username) {
-        return authDatabase.get(username);
+    public AuthData findAuth(String authToken) {
+        return authDatabase.get(authToken);
     }
 
 //    @Override
@@ -30,7 +30,7 @@ public class MemoryAuthDao implements AuthDAO {
 //    }
 
     @Override
-    public void deleteAuth(String username) {
-        authDatabase.remove(username);
+    public void deleteAuth(String authToken) {
+        authDatabase.remove(authToken);
     }
 }
