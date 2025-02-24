@@ -9,22 +9,28 @@ public class MemoryAuthDao implements AuthDAO {
     private HashMap<String, AuthData> authDatabase = new HashMap<String, AuthData>();
 
     @Override
-    public void create(AuthData authData) {
+    public void createAuth(AuthData authData) throws DataAccessException {
+        if (findAuth(authData.username()) != null) {
+            throw new DataAccessException("Username already authenticated");
+        }
         authDatabase.put(authData.username(), authData);
     }
 
     @Override
-    public AuthData read(String username) {
+    public AuthData findAuth(String username) {
         return authDatabase.get(username);
     }
 
-    @Override
-    public void update(AuthData authData) {
-        authDatabase.replace(authData.username(), authData);
-    }
+//    @Override
+//    public void updateAuth(AuthData authData) {
+//        if (findAuth(authData.username()) == null) {
+//            throw new DataAccessException("Username does not exist");
+//        }
+//        authDatabase.replace(authData.username(), authData);
+//    }
 
     @Override
-    public void delete(String username) {
+    public void deleteAuth(String username) {
         authDatabase.remove(username);
     }
 }

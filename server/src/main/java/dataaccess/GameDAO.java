@@ -3,8 +3,8 @@ package dataaccess;
 import model.GameData;
 
 public interface GameDAO {
-    void create(GameData gameData);
-    GameData read(Integer gameID);
-    void update(GameData gameData);
-    void delete(Integer gameID);
+    void createGame(GameData gameData) throws DataAccessException; // gameID already in use
+    GameData findGame(Integer gameID);
+    void updateGame(GameData gameData) throws DataAccessException; // gameID does not exist
+    void deleteGame(Integer gameID);
 }
