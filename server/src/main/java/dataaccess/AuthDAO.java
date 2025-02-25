@@ -2,6 +2,8 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.util.UUID;
+
 public interface AuthDAO {
     void createAuth(AuthData authData) throws DataAccessException; // username already in use;
     AuthData findAuth(String authToken);

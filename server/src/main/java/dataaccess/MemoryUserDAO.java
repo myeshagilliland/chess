@@ -13,7 +13,7 @@ public class MemoryUserDAO implements UserDAO {
     @Override
     public void createUser(UserData userData) throws DataAccessException {
         if (findUser(userData.username()) != null) {
-            throw new DataAccessException("Username already in use");
+            throw new DataAccessException("Error: already taken");
         }
         userDatabase.put(userData.username(), userData);
     }
