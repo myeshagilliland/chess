@@ -11,10 +11,7 @@ public class MemoryUserDAO implements UserDAO {
     private HashMap<String, UserData> userDatabase = new HashMap<String, UserData>();
 
     @Override
-    public void createUser(UserData userData) throws DataAccessException {
-        if (findUser(userData.username()) != null) {
-            throw new DataAccessException("Error: already taken");
-        }
+    public void createUser(UserData userData) {
         userDatabase.put(userData.username(), userData);
     }
 
@@ -24,10 +21,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void updateUser(UserData userData) throws DataAccessException {
-        if (findUser(userData.username()) == null) {
-            throw new DataAccessException("User does not exist");
-        }
+    public void updateUser(UserData userData) {
         userDatabase.replace(userData.username(), userData);
     }
 

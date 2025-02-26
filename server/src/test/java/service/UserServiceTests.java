@@ -20,8 +20,6 @@ public class UserServiceTests {
         RegisterRequest request = new RegisterRequest("name", "pwd", "me@mail");
 
         //expected
-//    set.seed(0);
-//    String authToken = UUID.randomUUID().toString();
         RegisterResult expected = new RegisterResult("name", "authToken");
 
         //when
@@ -32,9 +30,7 @@ public class UserServiceTests {
         //then
             assert Objects.equals(expected.username(), answer.username());
             assert answer.authToken() != null;
-        } catch (DataAccessException e) {
-//            answer = new RegisterResult(null, null);
-        }
+        } catch (DataAccessException e) {}
 
     }
 

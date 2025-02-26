@@ -10,10 +10,7 @@ public class MemoryGameDAO implements GameDAO {
     private HashMap<Integer, GameData> gameDatabase = new HashMap<Integer, GameData>();
 
     @Override
-    public void createGame(GameData gameData) throws DataAccessException {
-        if (findGame(gameData.gameID()) != null) {
-            throw new DataAccessException("GameID already in use");
-        }
+    public void createGame(GameData gameData) {
         gameDatabase.put(gameData.gameID(), gameData);
     }
 
@@ -23,10 +20,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData) throws DataAccessException {
-        if (findGame(gameData.gameID()) == null) {
-            throw new DataAccessException("Game does not exist");
-        }
+    public void updateGame(GameData gameData) {
         gameDatabase.replace(gameData.gameID(), gameData);
     }
 

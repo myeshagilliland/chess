@@ -21,10 +21,9 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest req) throws DataAccessException {
         UserData userData = new UserData(req.username(), req.password(), req.email());
-        try {
-            userDAO.createUser(userData);
-        } catch (DataAccessException e) {
-            throw e;
+
+        if (userDAO.findUser(req.username()) == null) {
+            throw new DataAccessException("Error: already taken");
         }
 
         String authToken = generateToken();

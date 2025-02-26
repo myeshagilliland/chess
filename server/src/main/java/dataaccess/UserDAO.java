@@ -9,8 +9,8 @@ public interface UserDAO {
 //    void update(userData info);
 //    void delete(username user);
 
-    void createUser(UserData userData) throws DataAccessException; // username already in use
-    UserData findUser(String username); //return null
-    void updateUser(UserData userData) throws DataAccessException; // user does not exist
+    void createUser(UserData userData);
+    UserData findUser(String username);
+    void updateUser(UserData userData);
     void deleteUser(String username);
 }

@@ -5,9 +5,9 @@ import model.GameData;
 import java.util.Collection;
 
 public interface GameDAO {
-    void createGame(GameData gameData) throws DataAccessException; // gameID already in use
+    void createGame(GameData gameData);
     GameData findGame(Integer gameID);
-    void updateGame(GameData gameData) throws DataAccessException; // gameID does not exist
+    void updateGame(GameData gameData);
     void deleteGame(Integer gameID);
     Collection<GameData> listGames();
 }
