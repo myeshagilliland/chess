@@ -44,7 +44,7 @@ public class UserServiceTests {
         try {
             userService.register(req);
         } catch (DataAccessException e) {
-            System.out.println("Failed to register first request");
+            System.out.println("Failed to register first request"); //this is executing, why?
         }
         DataAccessException expected = new DataAccessException("Error: already taken");
 
