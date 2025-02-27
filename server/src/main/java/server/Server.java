@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import handler.LoginHandler;
+import handler.LogoutHandler;
 import handler.RegisterHandler;
 import service.UserService;
 import spark.*;
@@ -22,6 +24,8 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);
         Spark.delete("/db", this::clear);
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
 //        Spark.get("/pet", this::listPets);
 //        Spark.delete("/pet/:id", this::deletePet);
 //        Spark.delete("/pet", this::deleteAllPets);
@@ -60,6 +64,18 @@ public class Server {
 //            res.status(500);
 //            return "Error: unidentified";
 //        }
+    }
+
+    private Object login(Request req, Response res) {
+        LoginHandler handler = new LoginHandler(req, res, userService);
+        res.status(handler.getStatusCode());
+        return handler.getResult();
+    }
+
+    private Object logout(Request req, Response res) {
+        LogoutHandler handler = new LogoutHandler(req, res, userService);
+        res.status(handler.getStatusCode());
+        return handler.getResult();
     }
 
     private Object clear(Request req, Response res) {
