@@ -2,10 +2,7 @@ package handler;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import service.LoginRequest;
-import service.LoginResult;
-import service.LogoutRequest;
-import service.UserService;
+import service.*;
 import spark.Request;
 import spark.Response;
 
@@ -15,18 +12,24 @@ public class LogoutHandler {
     private int statusCode;
 
     public LogoutHandler(Request req, Response res, UserService service) {
-        LogoutRequest logoutRequest = new Gson().fromJson(req.body(), LogoutRequest.class);
+//        System.out.println(req.headers());
+//        System.out.println(req.headers("Authorization"));
+        LogoutRequest logoutRequest = new LogoutRequest(req.headers("Authorization"));
+//        LogoutRequest logoutRequest = new Gson().fromJson(req.headers("Authorization"), LogoutRequest.class);
+        System.out.println(logoutRequest);
 
 //        if (loginRequest.username() == null || loginRequest.password() == null) {
 //            result = new Gson().toJson("Error: bad request");
 //            statusCode = 401;
 //        } else {
         try {
-            service.logout(logoutRequest);
-            result = null;
+            LogoutResult logoutResult = service.logout(logoutRequest);
+            result = new Gson().toJson(logoutResult); //error here
+            System.out.println(result);
             statusCode = 200;
         } catch (DataAccessException e) {
-            result = new Gson().toJson(e.getMessage());
+            ErrorMessage error = new ErrorMessage(e.getMessage());
+            result = new Gson().toJson(error);
             statusCode = 401;
         }
 //        }

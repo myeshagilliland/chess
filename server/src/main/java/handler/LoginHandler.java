@@ -23,7 +23,8 @@ public class LoginHandler {
             result = new Gson().toJson(loginResult);
             statusCode = 200;
         } catch (DataAccessException e) {
-            result = new Gson().toJson(e.getMessage());
+            ErrorMessage error = new ErrorMessage(e.getMessage());
+            result = new Gson().toJson(error);
             statusCode = 401;
         }
 //        }

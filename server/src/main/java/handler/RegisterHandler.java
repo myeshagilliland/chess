@@ -1,6 +1,7 @@
 package handler;
 
 import dataaccess.DataAccessException;
+import service.ErrorMessage;
 import service.RegisterRequest;
 import com.google.gson.Gson;
 import service.RegisterResult;
@@ -17,7 +18,9 @@ public class RegisterHandler {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
 //        System.out.println(registerRequest.toString());
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
-            result = new Gson().toJson("Error: bad request");
+            ErrorMessage error = new ErrorMessage("Error: bad request");
+            result = new Gson().toJson(error);
+//            result = new Gson().toJson("Error: bad request");
             statusCode = 400;
         } else {
             try {
@@ -25,7 +28,8 @@ public class RegisterHandler {
                 result = new Gson().toJson(registerResult);
                 statusCode = 200;
             } catch (DataAccessException e) {
-                result = new Gson().toJson(e.getMessage());
+                ErrorMessage error = new ErrorMessage(e.getMessage());
+                result = new Gson().toJson(error);
                 statusCode = 403;
             }
         }
@@ -35,13 +39,9 @@ public class RegisterHandler {
 //        }
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
+    public int getStatusCode() {return statusCode;}
 
-    public String getResult() {
-        return result;
-    }
+    public String getResult() {return result;}
 
     // JSON -> Java request object
     // call Service class on req obj

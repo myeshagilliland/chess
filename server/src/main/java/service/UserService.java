@@ -4,6 +4,7 @@ import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class UserService {
@@ -45,7 +46,9 @@ public class UserService {
 
     public LoginResult login(LoginRequest req) throws DataAccessException {
 
-        if (userDAO.findUser(req.username()) == null) {
+        UserData user = userDAO.findUser(req.username());
+
+        if (user == null || !Objects.equals(req.password(), user.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
 
@@ -54,13 +57,15 @@ public class UserService {
         return new LoginResult(req.username(), authToken);
     }
 
-    public void logout(LogoutRequest req) throws DataAccessException {
+    public LogoutResult logout(LogoutRequest req) throws DataAccessException {
 
         if (authDAO.findAuth(req.authToken()) == null) {
             throw new DataAccessException("Error: unauthorized");
         }
 
         authDAO.deleteAuth(req.authToken());
+
+        return new LogoutResult();
     }
 
 }
