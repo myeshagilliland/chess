@@ -1,16 +1,16 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDao;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import model.UserData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import service.RegisterRequest;
 import service.RegisterResult;
 import service.UserService;
 
 import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
@@ -25,11 +25,12 @@ public class UserServiceTests {
         //when
         RegisterResult answer;
         try {
-            answer = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO()).register(request);
+            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+            answer = userService.register(request);
 
         //then
-            assert Objects.equals(expected.username(), answer.username());
-            assert answer.authToken() != null;
+            assertEquals(expected.username(), answer.username());
+            assertNotNull(answer.authToken());
         } catch (DataAccessException e) {}
 
     }
@@ -54,8 +55,86 @@ public class UserServiceTests {
         } catch (DataAccessException e) {
 
         //then
-            assert Objects.equals(e.getMessage(), expected.getMessage());
+            assertEquals(e.getMessage(), expected.getMessage());
         }
 
+    }
+
+    @Test
+    public void testLoginPositive() {
+        //given
+        LoginRequest request = new LoginRequest("name", "pwd");
+
+        //expected
+        LoginResult expected = new LoginResult("name", "authToken");
+
+        //when
+        LoginResult answer;
+        try {
+            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+            answer = userService.login(request);
+
+        //then
+            assertEquals(expected.username(), answer.username());
+            assertNotNull(answer.authToken());
+        } catch (DataAccessException e) {}
+
+    }
+
+    @Test
+    public void testLoginNegative() {
+        //given
+        LoginRequest req = new LoginRequest("name", "pwd");
+
+        //expected
+        DataAccessException expected = new DataAccessException("Error: unauthorized");
+
+        //when
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+        try {
+            userService.login(req);
+        } catch (DataAccessException e) {
+
+        //then
+            assertEquals(e.getMessage(), expected.getMessage());
+        }
+
+    }
+
+    @Test
+    public void testLogoutPositive() {
+        //given
+        LogoutRequest request = new LogoutRequest("authToken");
+
+        //expected: void
+
+        //when
+        try {
+            AuthDAO authDAO = new MemoryAuthDao();
+            UserService userService = new UserService(new MemoryUserDAO(), authDAO, new MemoryGameDAO());
+            userService.logout(request);
+
+        //then
+            assert(authDAO.findAuth("authToken") == null);
+        } catch (DataAccessException e) {}
+    }
+
+    @Test
+    public void testLogoutNegative() {
+        //given
+        LogoutRequest request = new LogoutRequest("authToken");
+
+        //expected
+        DataAccessException expected = new DataAccessException("Error: unauthorized");
+
+        //when
+        try {
+            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+            userService.logout(request);
+        } catch (DataAccessException e) {
+
+        //then
+            assertEquals(e.getMessage(), expected.getMessage());
+        }
     }
 }

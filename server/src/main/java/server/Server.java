@@ -21,6 +21,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);
+        Spark.delete("/db", this::clear);
 //        Spark.get("/pet", this::listPets);
 //        Spark.delete("/pet/:id", this::deletePet);
 //        Spark.delete("/pet", this::deleteAllPets);
@@ -59,6 +60,12 @@ public class Server {
 //            res.status(500);
 //            return "Error: unidentified";
 //        }
+    }
+
+    private Object clear(Request req, Response res) {
+        setServices(); //legal?
+        res.status(200);
+        return "";
     }
 
 //    private Object register(Request req, Response res)  { //throws ResponseException

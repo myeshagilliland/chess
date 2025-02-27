@@ -15,7 +15,7 @@ public class RegisterHandler {
 
     public RegisterHandler (Request req, Response res, UserService service) {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
-        System.out.println(registerRequest.toString());
+//        System.out.println(registerRequest.toString());
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             result = new Gson().toJson("Error: bad request");
             statusCode = 400;
