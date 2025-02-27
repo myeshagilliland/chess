@@ -1,16 +1,16 @@
 package service;
 
 import dataaccess.DataAccessException;
+import dataaccess.MemoryAuthDao;
+import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Test;
 import service.RegisterRequest;
 import service.RegisterResult;
 import service.UserService;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class UserServiceTests {
 
@@ -25,7 +25,7 @@ public class UserServiceTests {
         //when
         RegisterResult answer;
         try {
-            answer = new UserService().register(request);
+            answer = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO()).register(request);
 
         //then
             assert Objects.equals(expected.username(), answer.username());
@@ -40,7 +40,7 @@ public class UserServiceTests {
         RegisterRequest req = new RegisterRequest("name", "pwd", "me@mail");
 
         //expected
-        UserService userService = new UserService();
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
         try {
             userService.register(req);
         } catch (DataAccessException e) {

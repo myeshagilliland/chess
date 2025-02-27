@@ -15,8 +15,9 @@ public class RegisterHandler {
 
     public RegisterHandler (Request req, Response res, UserService service) {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
+        System.out.println(registerRequest.toString());
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
-            result = "Error: bad request";
+            result = new Gson().toJson("Error: bad request");
             statusCode = 400;
         } else {
             try {
@@ -24,7 +25,7 @@ public class RegisterHandler {
                 result = new Gson().toJson(registerResult);
                 statusCode = 200;
             } catch (DataAccessException e) {
-                result = e.getMessage();
+                result = new Gson().toJson(e.getMessage());
                 statusCode = 403;
             }
         }

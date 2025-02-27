@@ -1,21 +1,23 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.*;
 import handler.RegisterHandler;
 import service.UserService;
 import spark.*;
 
 public class Server {
 
-    private UserService userService = new UserService();
-//    private AuthService authService = new AuthService();
-//    private GameService gameService = new GameService();
-
+    private UserService userService;
+//    private AuthService authService;
+//    private GameService gameService;
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        setServices();
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);
@@ -39,6 +41,15 @@ public class Server {
 
     //port method??
     //exception handler??
+
+    private void setServices() {
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDao();
+        GameDAO gameDAO = new MemoryGameDAO();
+        userService = new UserService(userDAO, authDAO, gameDAO);
+//        authService = new AuthService(userDAO, authDAO, gameDAO);
+//        gameService = new GameService(userDAO, authDAO, gameDAO);
+    }
 
     private Object register(Request req, Response res) {
         RegisterHandler handler = new RegisterHandler(req, res, userService);
