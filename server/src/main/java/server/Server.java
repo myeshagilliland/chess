@@ -2,10 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import handler.CreateGameHandler;
-import handler.LoginHandler;
-import handler.LogoutHandler;
-import handler.RegisterHandler;
+import handler.*;
 import service.GameService;
 import service.UserService;
 import spark.*;
@@ -29,6 +26,7 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
 //        Spark.get("/pet", this::listPets);
 //        Spark.delete("/pet/:id", this::deletePet);
 //        Spark.delete("/pet", this::deleteAllPets);
@@ -83,6 +81,12 @@ public class Server {
 
     private Object createGame(Request req, Response res) {
         CreateGameHandler handler = new CreateGameHandler(req, res, gameService);
+        res.status(handler.getStatusCode());
+        return handler.getResult();
+    }
+
+    private Object joinGame(Request req, Response res) {
+        JoinGameHandler handler = new JoinGameHandler(req, res, gameService);
         res.status(handler.getStatusCode());
         return handler.getResult();
     }

@@ -20,7 +20,6 @@ public class RegisterHandler {
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             ErrorMessage error = new ErrorMessage("Error: bad request");
             result = new Gson().toJson(error);
-//            result = new Gson().toJson("Error: bad request");
             statusCode = 400;
         } else {
             try {

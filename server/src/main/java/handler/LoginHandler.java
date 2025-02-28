@@ -15,7 +15,8 @@ public class LoginHandler {
         LoginRequest loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
 
 //        if (loginRequest.username() == null || loginRequest.password() == null) {
-//            result = new Gson().toJson("Error: bad request");
+//        ErrorMessage error = new ErrorMessage("Error: bad request");
+//        result = new Gson().toJson(error);
 //            statusCode = 401;
 //        } else {
         try {

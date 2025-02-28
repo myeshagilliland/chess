@@ -25,16 +25,16 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    private static String generateToken() {
-        return UUID.randomUUID().toString();
-    }
+//    private static String generateToken() {
+//        return UUID.randomUUID().toString();
+//    }
 
-    private String authenticate(String username) {
-        String authToken = generateToken();
-        AuthData authData = new AuthData(authToken, username);
-        authDAO.createAuth(authData);
-        return authToken;
-    }
+//    private String authenticate(String username) {
+//        String authToken = generateToken();
+//        AuthData authData = new AuthData(authToken, username);
+//        authDAO.createAuth(authData);
+//        return authToken;
+//    }
 
     private static int generateGameID() {
         return new Random().nextInt(10000);
@@ -53,6 +53,36 @@ public class GameService {
         gameDAO.createGame(gameData);
 
         return new CreateGameResult(gameID);
+    }
+
+    public JoinGameResult joinGame(JoinGameRequest req) throws DataAccessException {
+
+        AuthData authData = authDAO.findAuth(req.authToken());
+        if (authData == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        GameData gameData = gameDAO.findGame(req.gameID());
+        if (gameData == null) {
+            throw new DataAccessException("Error: game does not exist");
+        }
+
+        boolean whiteTaken = (Objects.equals(req.playerColor(), "WHITE") & gameData.whiteUsername() != null);
+        boolean blackTaken = (Objects.equals(req.playerColor(), "BLACK") & gameData.blackUsername() != null);
+        if (whiteTaken || blackTaken) {
+            throw new DataAccessException("Error: already taken");
+        }
+
+        GameData updatedGameData;
+        if (Objects.equals(req.playerColor(), "WHITE")) {
+            updatedGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        } else {
+            updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
+        }
+
+        gameDAO.updateGame(updatedGameData);
+
+        return new JoinGameResult();
     }
 
 }

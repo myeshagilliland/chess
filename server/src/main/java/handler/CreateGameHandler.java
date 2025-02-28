@@ -17,7 +17,8 @@ public class CreateGameHandler {
 //        System.out.println(createGameRequest);
 
         if (createGameRequest.authToken() == null || createGameRequest.gameName() == null) {
-            result = new Gson().toJson("Error: bad request");
+            ErrorMessage error = new ErrorMessage("Error: bad request");
+            result = new Gson().toJson(error);
             statusCode = 400;
         } else {
             try {

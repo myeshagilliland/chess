@@ -52,4 +52,10 @@ public class GameServiceTests {
         }
 
     }
+
+    @Test
+    public void joinGamePositive() {
+        //given
+//        JoinGameRequest joinGameRequest = new JoinGameRequest("authToken", "WHITE", ""); //gameID how to work around?
+    }
 }
