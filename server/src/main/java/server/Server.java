@@ -2,9 +2,11 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import handler.CreateGameHandler;
 import handler.LoginHandler;
 import handler.LogoutHandler;
 import handler.RegisterHandler;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -12,7 +14,7 @@ public class Server {
 
     private UserService userService;
 //    private AuthService authService;
-//    private GameService gameService;
+    private GameService gameService;
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -26,6 +28,7 @@ public class Server {
         Spark.delete("/db", this::clear);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
+        Spark.post("/game", this::createGame);
 //        Spark.get("/pet", this::listPets);
 //        Spark.delete("/pet/:id", this::deletePet);
 //        Spark.delete("/pet", this::deleteAllPets);
@@ -53,7 +56,7 @@ public class Server {
         GameDAO gameDAO = new MemoryGameDAO();
         userService = new UserService(userDAO, authDAO, gameDAO);
 //        authService = new AuthService(userDAO, authDAO, gameDAO);
-//        gameService = new GameService(userDAO, authDAO, gameDAO);
+        gameService = new GameService(userDAO, authDAO, gameDAO);
     }
 
     private Object register(Request req, Response res) {
@@ -74,6 +77,12 @@ public class Server {
 
     private Object logout(Request req, Response res) {
         LogoutHandler handler = new LogoutHandler(req, res, userService);
+        res.status(handler.getStatusCode());
+        return handler.getResult();
+    }
+
+    private Object createGame(Request req, Response res) {
+        CreateGameHandler handler = new CreateGameHandler(req, res, gameService);
         res.status(handler.getStatusCode());
         return handler.getResult();
     }

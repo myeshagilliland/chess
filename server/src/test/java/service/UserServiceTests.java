@@ -1,14 +1,7 @@
 package service;
 
 import dataaccess.*;
-import model.UserData;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import service.RegisterRequest;
-import service.RegisterResult;
-import service.UserService;
-
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
