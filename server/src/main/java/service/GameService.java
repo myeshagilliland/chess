@@ -9,9 +9,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class GameService {
 
@@ -83,6 +81,19 @@ public class GameService {
         gameDAO.updateGame(updatedGameData);
 
         return new JoinGameResult();
+    }
+
+    public ListGamesResult listGames(ListGamesRequest req) throws DataAccessException {
+
+        AuthData authData = authDAO.findAuth(req.authToken());
+        if (authData == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        Collection<GameData> gamesCollection = gameDAO.listGames();
+        ArrayList<GameData> games = new ArrayList<>(gamesCollection);
+
+        return new ListGamesResult(games);
     }
 
 }

@@ -31,6 +31,8 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public Collection<GameData> listGames() {
-        return gameDatabase.values();
+//        return (gameDatabase.values().toArray(new GameData[]{}));
+        return (gameDatabase.values());
     }
+
 }

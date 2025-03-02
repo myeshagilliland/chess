@@ -2,7 +2,8 @@ package service;
 
 import model.GameData;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public record ListGamesResult(List<GameData> games) {
+public record ListGamesResult(ArrayList<GameData> games) {
 }
