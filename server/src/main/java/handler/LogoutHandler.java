@@ -11,7 +11,7 @@ public class LogoutHandler {
     private String result;
     private int statusCode;
 
-    public LogoutHandler(Request req, Response res, UserService service) {
+    public LogoutHandler(Request req, UserService service) {
 //        System.out.println(req.headers());
 //        System.out.println(req.headers("Authorization"));
         LogoutRequest logoutRequest = new LogoutRequest(req.headers("Authorization"));

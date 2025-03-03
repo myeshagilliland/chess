@@ -13,16 +13,16 @@ public class JoinGameHandler {
     private String result;
     private int statusCode;
 
-    public JoinGameHandler(Request req, Response res, GameService service) {
+    public JoinGameHandler(Request req, GameService service) {
         JoinGameRequest joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
         joinGameRequest = new JoinGameRequest(req.headers("Authorization"), joinGameRequest.playerColor(), joinGameRequest.gameID());
-        System.out.println(joinGameRequest);
 
-        if (joinGameRequest.authToken() == null || joinGameRequest.playerColor() == null || joinGameRequest.gameID() == 0) { // || joinGameRequest.gameID() == 0 double check this for gameID too
+        if (req.headers("Authorization") == null || (!Objects.equals(joinGameRequest.playerColor(), "WHITE") && !Objects.equals(joinGameRequest.playerColor(), "BLACK"))  || joinGameRequest.gameID() == 0) {
             ErrorMessage error = new ErrorMessage("Error: bad request");
             result = new Gson().toJson(error);
             statusCode = 400;
         } else {
+            System.out.println(joinGameRequest);
             try {
                 JoinGameResult joinGameResult = service.joinGame(joinGameRequest);
                 result = new Gson().toJson(joinGameResult);

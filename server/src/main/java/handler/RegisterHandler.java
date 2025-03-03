@@ -14,7 +14,7 @@ public class RegisterHandler {
     private int statusCode = 0;
 //    private String errorMessage = "";
 
-    public RegisterHandler (Request req, Response res, UserService service) {
+    public RegisterHandler (Request req, UserService service) {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
 //        System.out.println(registerRequest.toString());
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {

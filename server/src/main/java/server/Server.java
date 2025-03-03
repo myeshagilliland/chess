@@ -27,6 +27,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
+        Spark.get("/game", this::listGames);
 //        Spark.get("/pet", this::listPets);
 //        Spark.delete("/pet/:id", this::deletePet);
 //        Spark.delete("/pet", this::deleteAllPets);
@@ -58,7 +59,7 @@ public class Server {
     }
 
     private Object register(Request req, Response res) {
-        RegisterHandler handler = new RegisterHandler(req, res, userService);
+        RegisterHandler handler = new RegisterHandler(req, userService);
         res.status(handler.getStatusCode());
         return handler.getResult();
 //        if (result == null || statusCode == 0) {
@@ -68,25 +69,31 @@ public class Server {
     }
 
     private Object login(Request req, Response res) {
-        LoginHandler handler = new LoginHandler(req, res, userService);
+        LoginHandler handler = new LoginHandler(req, userService);
         res.status(handler.getStatusCode());
         return handler.getResult();
     }
 
     private Object logout(Request req, Response res) {
-        LogoutHandler handler = new LogoutHandler(req, res, userService);
+        LogoutHandler handler = new LogoutHandler(req, userService);
         res.status(handler.getStatusCode());
         return handler.getResult();
     }
 
     private Object createGame(Request req, Response res) {
-        CreateGameHandler handler = new CreateGameHandler(req, res, gameService);
+        CreateGameHandler handler = new CreateGameHandler(req, gameService);
         res.status(handler.getStatusCode());
         return handler.getResult();
     }
 
     private Object joinGame(Request req, Response res) {
-        JoinGameHandler handler = new JoinGameHandler(req, res, gameService);
+        JoinGameHandler handler = new JoinGameHandler(req, gameService);
+        res.status(handler.getStatusCode());
+        return handler.getResult();
+    }
+
+    private Object listGames(Request req, Response res) {
+        ListGamesHandler handler = new ListGamesHandler(req, gameService);
         res.status(handler.getStatusCode());
         return handler.getResult();
     }
