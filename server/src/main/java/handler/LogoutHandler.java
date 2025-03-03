@@ -2,9 +2,10 @@ package handler;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import requestresult.LogoutRequest;
+import requestresult.LogoutResult;
 import service.*;
 import spark.Request;
-import spark.Response;
 
 public class LogoutHandler {
 

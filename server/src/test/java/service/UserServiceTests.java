@@ -3,11 +3,10 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.Test;
+import requestresult.*;
 
 import java.util.Collection;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -154,22 +153,13 @@ public class UserServiceTests {
         String authToken = userInfo.authToken();
         CreateGameRequest createGameRequest = new CreateGameRequest(authToken, "gameName1");
         GameService gameService = new GameService(userDao, authDAO, gameDAO);
-//        CreateGameResult createGameResult = new CreateGameResult(0);
         try {
-//            createGameResult = gameService.createGame(createGameRequest);
             gameService.createGame(createGameRequest);
         } catch (DataAccessException e) {}
 
         ClearRequest clearRequest = new ClearRequest();
 
         //expected
-//        HashMap<String, AuthData> expectedAuth = new HashMap<String, AuthData>();
-//        HashMap<Integer, GameData> expectedGame = new HashMap<Integer, GameData>();
-//        HashMap<String, UserData> expectedUser = new HashMap<String, UserData>();
-
-//        UserDAO expectedUserDao = new MemoryUserDAO();
-//        AuthDAO expectedAuthDAO = new MemoryAuthDao();
-//        GameDAO expectedGameDAO = new MemoryGameDAO();
 
         //when
         try {
