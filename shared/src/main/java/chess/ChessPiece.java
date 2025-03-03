@@ -88,7 +88,6 @@ public class ChessPiece {
             return false;
         }
         ChessPiece that = (ChessPiece) o;
-//        return pieceColor == that.pieceColor && type == that.type;
         return getTeamColor() == that.getTeamColor() && getPieceType() == that.getPieceType();
     }
 

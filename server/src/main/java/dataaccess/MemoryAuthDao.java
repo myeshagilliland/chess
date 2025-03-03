@@ -18,16 +18,13 @@ public class MemoryAuthDao implements AuthDAO {
         return authDatabase.get(authToken);
     }
 
-//    @Override
-//    public void updateAuth(AuthData authData) {
-//        if (findAuth(authData.username()) == null) {
-//            throw new DataAccessException("Username does not exist");
-//        }
-//        authDatabase.replace(authData.username(), authData);
-//    }
-
     @Override
     public void deleteAuth(String authToken) {
         authDatabase.remove(authToken);
+    }
+
+    @Override
+    public void clear() {
+        authDatabase = new HashMap<String, AuthData>();
     }
 }

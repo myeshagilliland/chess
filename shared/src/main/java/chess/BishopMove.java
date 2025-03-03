@@ -10,12 +10,11 @@ public class BishopMove {
 
     private ChessBoard chessBoard;
     private ChessPosition myPosition;
-    private Collection<ChessMove> moves = new ArrayList<ChessMove>(); //handle null case
+    private Collection<ChessMove> moves = new ArrayList<ChessMove>();
 
     public BishopMove(ChessBoard board, ChessPosition myPosition) {
         this.chessBoard = board;
         this.myPosition = myPosition;
-//        this.moves = new ArrayList<ChessMove>();
     }
 
     /**
@@ -47,30 +46,30 @@ public class BishopMove {
 
         //to top right
         for (int i = 1; i<8; i++) {
-            int new_row = row + i;
-            int new_col = col + i;
-            boolean valid = checkAddPosition(new_row, new_col, team);
+            int newRow = row + i;
+            int newCol = col + i;
+            boolean valid = checkAddPosition(newRow, newCol, team);
             if (!valid) {break;}
         }
         //to bottom left
         for (int i = 1; i<8; i++) {
-            int new_row = row - i;
-            int new_col = col - i;
-            boolean valid = checkAddPosition(new_row, new_col, team);
+            int newRow = row - i;
+            int newCol = col - i;
+            boolean valid = checkAddPosition(newRow, newCol, team);
             if (!valid) {break;}
         }
         //to top left
         for (int i = 1; i<8; i++) {
-            int new_row = row + i;
-            int new_col = col - i;
-            boolean valid = checkAddPosition(new_row, new_col, team);
+            int newRow = row + i;
+            int newCol = col - i;
+            boolean valid = checkAddPosition(newRow, newCol, team);
             if (!valid) {break;}
         }
         //to bottom right
         for (int i = 1; i<8; i++) {
-            int new_row = row - i;
-            int new_col = col + i;
-            boolean valid = checkAddPosition(new_row, new_col, team);
+            int newRow = row - i;
+            int newCol = col + i;
+            boolean valid = checkAddPosition(newRow, newCol, team);
             if (!valid) {break;}
         }
 

@@ -21,12 +21,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void updateUser(UserData userData) {
-        userDatabase.replace(userData.username(), userData);
-    }
-
-    @Override
-    public void deleteUser(String username) {
-        userDatabase.remove(username);
+    public void clear() {
+        userDatabase = new HashMap<String, UserData>();
     }
 }

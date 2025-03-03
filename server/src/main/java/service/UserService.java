@@ -4,6 +4,7 @@ import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 
+import javax.xml.crypto.Data;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -66,6 +67,14 @@ public class UserService {
         authDAO.deleteAuth(req.authToken());
 
         return new LogoutResult();
+    }
+
+    public ClearResult clear(ClearRequest req) throws DataAccessException {
+        userDAO.clear();
+        authDAO.clear();
+        gameDAO.clear();
+
+        return new ClearResult();
     }
 
 }
