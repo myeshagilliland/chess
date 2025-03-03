@@ -10,13 +10,12 @@ import spark.*;
 
 public class RegisterHandler {
 
-    private String result = null;
-    private int statusCode = 0;
-//    private String errorMessage = "";
+    private String result;
+    private int statusCode;
 
     public RegisterHandler (Request req, UserService service) {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
-//        System.out.println(registerRequest.toString());
+
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             ErrorMessage error = new ErrorMessage("Error: bad request");
             result = new Gson().toJson(error);
@@ -32,22 +31,10 @@ public class RegisterHandler {
                 statusCode = 403;
             }
         }
-//        if (statusCode == 0) {
-//            result = "Error: unidentified";
-//            statusCode = 500;
-//        }
     }
 
     public int getStatusCode() {return statusCode;}
 
     public String getResult() {return result;}
 
-    // JSON -> Java request object
-    // call Service class on req obj
-    // Java response obj -> JSON
-    // return
-
-    // OR catch error -> return JSON error message
-
-    //    var pet = new Gson().fromJson(req.body(), RegisterHandler.class);
 }

@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.*;
 import spark.Request;
-import spark.Response;
-
 import java.util.Objects;
 
 public class JoinGameHandler {

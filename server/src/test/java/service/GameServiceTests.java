@@ -32,7 +32,6 @@ public class GameServiceTests {
         CreateGameRequest request = new CreateGameRequest(authToken, "gameName");
 
         //expected
-//        CreateGameResult expected = new CreateGameResult(1234);
 
         //when
         CreateGameResult answer;
@@ -58,7 +57,6 @@ public class GameServiceTests {
 
         //when
         try {
-//            GameDAO gameDAO = new MemoryGameDAO();
             GameService gameService = new GameService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
             gameService.createGame(request);
 
@@ -166,13 +164,10 @@ public class GameServiceTests {
 
         String authToken = userInfo.authToken();
         CreateGameRequest createGameRequest1 = new CreateGameRequest(authToken, "gameName1");
-//        CreateGameRequest createGameRequest2 = new CreateGameRequest(authToken, "gameName2");
         GameService gameService = new GameService(userDao, authDAO, gameDAO);
         CreateGameResult createGameResult1 = new CreateGameResult(0);
-//        CreateGameResult createGameResult2 = new CreateGameResult(0);
         try {
             createGameResult1 = gameService.createGame(createGameRequest1);
-//            createGameResult2 = gameService.createGame(createGameRequest1);
         } catch (DataAccessException e) {
             System.out.println("failed to create game");
         }
@@ -181,17 +176,8 @@ public class GameServiceTests {
 
         //expected
         GameData gameData1 = gameDAO.findGame(createGameResult1.gameID());
-//        GameData gameData2 = gameDAO.findGame(createGameResult2.gameID());
-//        GameData[] games = {gameData1, gameData2};
-
-//        GameData[] games = gameDAO.listGames();
-
-//        ArrayList<GameData> games = new ArrayList<>();
-
-
         ArrayList<GameData> games = new ArrayList<>();
         games.add(gameData1);
-
         ListGamesResult expected = new ListGamesResult(games);
 
         //when
@@ -239,7 +225,6 @@ public class GameServiceTests {
         GameData gameData2 = gameDAO.findGame(createGameResult2.gameID());
         GameData[] games = {gameData1, gameData2};
 
-//        ListGamesResult expected = new ListGamesResult(games);
         DataAccessException expected = new DataAccessException("Error: unauthorized");
 
 
@@ -247,7 +232,6 @@ public class GameServiceTests {
         ListGamesResult listGamesResult;
         try {
             listGamesResult = gameService.listGames(listGamesRequest);
-//            assertEquals(listGamesResult, expected);
         } catch (DataAccessException e) {
 
         //then

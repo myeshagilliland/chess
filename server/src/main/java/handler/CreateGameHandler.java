@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.*;
 import spark.Request;
-import spark.Response;
 
 public class CreateGameHandler {
 
@@ -14,7 +13,6 @@ public class CreateGameHandler {
     public CreateGameHandler(Request req, GameService service) {
         CreateGameRequest createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
         createGameRequest = new CreateGameRequest(req.headers("Authorization"), createGameRequest.gameName());
-//        System.out.println(createGameRequest);
 
         if (createGameRequest.authToken() == null || createGameRequest.gameName() == null) {
             ErrorMessage error = new ErrorMessage("Error: bad request");

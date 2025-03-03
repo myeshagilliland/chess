@@ -99,7 +99,7 @@ public class UserServiceTests {
         //given
         LogoutRequest request = new LogoutRequest("authToken");
 
-        //expected: void
+        //expected
 
         //when
         try {
