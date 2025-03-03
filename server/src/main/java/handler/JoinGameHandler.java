@@ -20,7 +20,6 @@ public class JoinGameHandler {
             result = new Gson().toJson(error);
             statusCode = 400;
         } else {
-            System.out.println(joinGameRequest);
             try {
                 JoinGameResult joinGameResult = service.joinGame(joinGameRequest);
                 result = new Gson().toJson(joinGameResult);

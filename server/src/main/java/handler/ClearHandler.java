@@ -4,24 +4,23 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.*;
 import spark.Request;
-import spark.Response;
 
-public class LogoutHandler {
+public class ClearHandler {
 
     private String result;
     private int statusCode;
 
-    public LogoutHandler(Request req, UserService service) {
-        LogoutRequest logoutRequest = new LogoutRequest(req.headers("Authorization"));
+    public ClearHandler(Request req, UserService service) {
+        ClearRequest clearRequest = new ClearRequest();
 
         try {
-            LogoutResult logoutResult = service.logout(logoutRequest);
-            result = new Gson().toJson(logoutResult);
+            ClearResult clearResult = service.clear(clearRequest);
+            result = new Gson().toJson(clearResult);
             statusCode = 200;
         } catch (DataAccessException e) {
             ErrorMessage error = new ErrorMessage(e.getMessage());
             result = new Gson().toJson(error);
-            statusCode = 401;
+            statusCode = 500;
         }
     }
 

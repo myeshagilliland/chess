@@ -81,9 +81,9 @@ public class Server {
     }
 
     private Object clear(Request req, Response res) {
-        setServices();
-        res.status(200);
-        return "";
+        ClearHandler handler = new ClearHandler(req, userService);
+        res.status(handler.getStatusCode());
+        return handler.getResult();
     }
 
 }

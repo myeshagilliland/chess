@@ -9,4 +9,5 @@ public interface AuthDAO {
     AuthData findAuth(String authToken);
 //    void updateAuth(AuthData authData);
     void deleteAuth(String authToken);
+    void clear();
 }

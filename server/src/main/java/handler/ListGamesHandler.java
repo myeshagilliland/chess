@@ -16,7 +16,6 @@ public class ListGamesHandler {
         try {
             ListGamesResult listGamesResult = service.listGames(listGamesRequest);
             result = new Gson().toJson(listGamesResult);
-            System.out.println(result);
             statusCode = 200;
         } catch (DataAccessException e) {
             ErrorMessage error = new ErrorMessage(e.getMessage());

@@ -32,4 +32,9 @@ public class MemoryGameDAO implements GameDAO {
         return (gameDatabase.values());
     }
 
+    @Override
+    public void clear() {
+        gameDatabase = new HashMap<Integer, GameData>();
+    }
+
 }
