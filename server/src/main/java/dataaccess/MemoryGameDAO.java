@@ -23,11 +23,6 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void deleteGame(Integer gameID) {
-        gameDatabase.remove(gameID);
-    }
-
-    @Override
     public Collection<GameData> listGames() {
         return (gameDatabase.values());
     }

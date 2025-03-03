@@ -40,7 +40,6 @@ public class ChessPosition {
             return false;
         }
         ChessPosition that = (ChessPosition) o;
-//        return getRow() == that.getRow() && col == that.col;
         return getRow() == that.getRow() && getColumn() == that.getColumn();
     }
 

@@ -10,12 +10,11 @@ public class KingMove {
 
     private ChessBoard chessBoard;
     private ChessPosition myPosition;
-    private Collection<ChessMove> moves = new ArrayList<ChessMove>(); //handle null case
+    private Collection<ChessMove> moves = new ArrayList<ChessMove>();
 
     public KingMove(ChessBoard board, ChessPosition myPosition) {
         this.chessBoard = board;
         this.myPosition = myPosition;
-//        this.moves = new ArrayList<ChessMove>();
     }
 
     /**

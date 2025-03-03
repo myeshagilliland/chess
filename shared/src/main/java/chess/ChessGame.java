@@ -2,8 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -25,7 +23,6 @@ public class ChessGame {
        defaultBoard.resetBoard();
        setBoard(defaultBoard);
        setTeamTurn(TeamColor.WHITE);
-//       resetPiecesCollections();
     }
 
     /**
@@ -89,33 +86,8 @@ public class ChessGame {
                 validMoves.add(move);
             }
 
-//            possibleMoves.removeIf(testGame.isInCheck(team));
-
         }
 
-//        //if currently in check, remove move if it doesn't escape check
-//        if (isInCheck(team)) {
-//            for (ChessMove move:possibleMoves){
-//                //create new ChessBoard object
-//                ChessBoard testBoard = board.clone();
-//                ChessPiece myPiece = testBoard.getPiece(startPosition);
-//                testBoard.addPiece(startPosition, null); //remove old piece
-//                testBoard.addPiece(move.getEndPosition(), myPiece); //add to new
-//
-//                //create new ChessGame object
-//                ChessGame testGame = new ChessGame();
-//                testGame.setBoard(testBoard);
-//                testGame.setTeamTurn(otherTeam);
-//                testGame.resetPiecesCollections();
-//
-//                if (testGame.isInCheck(team)) {
-//                    possibleMoves.remove(move);
-//                }
-//
-//            }
-//        }
-
-//        return possibleMoves;
         return validMoves;
     }
 
@@ -155,7 +127,6 @@ public class ChessGame {
             board.addPiece(move.getStartPosition(), null); //remove old piece
 
             if (myPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
-//                ChessPiece.PieceType promotionType = move.getPromotionPiece();
                 ChessPiece promotionPiece = new ChessPiece(team, move.getPromotionPiece());
                 if (board.getPiece(move.getEndPosition()) != null) {
                     whitePiecePositions.remove(move.getEndPosition());
@@ -201,7 +172,6 @@ public class ChessGame {
 
         for (ChessPosition position:otherTeamPositions) {
             Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
-//            Collection<ChessMove> moves = validMoves(position);
 
             for (ChessMove move:moves) {
                 if (move.getEndPosition().equals(kingPosition)) {
@@ -212,20 +182,6 @@ public class ChessGame {
 
         return false;
 
-//        for (int row = 1; row <= 8; row++) {
-//            for (int col = 1; col <= 8; col++) {
-//                ChessPosition position = new ChessPosition(row, col);
-//                ChessPiece piece = board.getPiece(position);
-//                if (piece.getTeamColor() != teamColor) {
-//                    Collection<ChessMove> moves = piece.pieceMoves(board, position);
-//                    for (ChessMove move : moves) {
-//                        if (move.getEndPosition() == kingPosition) {
-//                            return true;
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 
     /**
@@ -235,9 +191,6 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-//        if (!isInCheck(teamColor)) {
-//            return false;
-//        }
 
         Collection<ChessPosition> piecePositions;
         if (teamColor == TeamColor.WHITE) {
@@ -253,7 +206,6 @@ public class ChessGame {
         }
 
         return true;
-//        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -328,12 +280,6 @@ public class ChessGame {
                 }
             }
         }
-//        for (int row = 1; row <= 2; row++) {
-//            for (int col = 1; col <=8; col++) {
-//                whitePiecePositions.add(new ChessPosition(row, col));
-//                blackPiecePositions.add(new ChessPosition(9-row, col));
-//            }
-//        }
     }
 
     /**
