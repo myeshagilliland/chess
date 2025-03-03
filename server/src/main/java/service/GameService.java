@@ -7,7 +7,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
+import requestresult.*;
 
 import java.util.*;
 

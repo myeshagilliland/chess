@@ -1,6 +1,4 @@
-package service;
-
-import java.util.Objects;
+package requestresult;
 
 public record RegisterResult(String username, String authToken) {
 }

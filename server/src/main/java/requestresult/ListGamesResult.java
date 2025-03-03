@@ -1,4 +1,4 @@
-package service;
+package requestresult;
 
 import model.GameData;
 import java.util.ArrayList;

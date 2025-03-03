@@ -255,6 +255,7 @@ public class ChessGame {
         return board;
     }
 
+
     /**
      * initialize black/whitePieces and black/whiteKingPosition for default board
      */
@@ -265,19 +266,26 @@ public class ChessGame {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(row,col));
                 if (currentPiece != null) {
-                    if (currentPiece.getTeamColor() == TeamColor.WHITE) {
-                        whitePiecePositions.add(new ChessPosition(row, col));
-                        if (currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
-                            whiteKingPosition = new ChessPosition(row, col);
-                        }
-                    } else {
-                        blackPiecePositions.add(new ChessPosition(row, col));
-                        if (currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
-                            blackKingPosition = new ChessPosition(row, col);
-                        }
-                    }
-
+                    addToCorrectPieceCollection(currentPiece, row, col);
                 }
+            }
+        }
+    }
+
+
+    /**
+     * check piece type and color and add to correct black/white position collections
+     */
+    private void addToCorrectPieceCollection(ChessPiece currentPiece, int row, int col) {
+        if (currentPiece.getTeamColor() == TeamColor.WHITE) {
+            whitePiecePositions.add(new ChessPosition(row, col));
+            if (currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                whiteKingPosition = new ChessPosition(row, col);
+            }
+        } else {
+            blackPiecePositions.add(new ChessPosition(row, col));
+            if (currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                blackKingPosition = new ChessPosition(row, col);
             }
         }
     }

@@ -3,10 +3,9 @@ package service;
 import dataaccess.*;
 import model.GameData;
 import org.junit.jupiter.api.Test;
+import requestresult.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;

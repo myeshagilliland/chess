@@ -1,20 +1,14 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Represents moving a Bishop piece on a chessboard
+ * Represents moving a Queen piece on a chessboard
  */
-public class QueenMove {
-
-    private ChessBoard chessBoard;
-    private ChessPosition myPosition;
-    private Collection<ChessMove> moves = new ArrayList<ChessMove>();
+public class QueenMove extends PieceMove {
 
     public QueenMove(ChessBoard board, ChessPosition myPosition) {
-        this.chessBoard = board;
-        this.myPosition = myPosition;
+        super(board, myPosition);
     }
 
     /**
