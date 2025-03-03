@@ -67,6 +67,27 @@ public class GameServiceTests {
 
     }
 
+    public RegisterResult generateUserInfo (UserService userService) {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        RegisterResult userInfo = null;
+        try {
+            userInfo = userService.register(registerRequest);
+        } catch (DataAccessException e) {}
+        return userInfo;
+    }
+
+    public CreateGameResult generateCreateGameResult (RegisterResult userInfo, GameService gameService) {
+        String authToken = userInfo.authToken();
+        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, "gameName");
+        CreateGameResult createGameResult = new CreateGameResult(0);
+        try {
+            createGameResult = gameService.createGame(createGameRequest);
+        } catch (DataAccessException e) {
+            System.out.println("failed to create game");
+        }
+        return createGameResult;
+    }
+
     @Test
     public void joinGamePositive() {
         //given
@@ -75,23 +96,11 @@ public class GameServiceTests {
         GameDAO gameDAO = new MemoryGameDAO();
 
         UserService userService = new UserService(userDao, authDAO, gameDAO);
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        RegisterResult userInfo = null;
-        try {
-            userInfo = userService.register(registerRequest);
-        } catch (DataAccessException e) {}
-
-        String authToken = userInfo.authToken();
-        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, "gameName");
         GameService gameService = new GameService(userDao, authDAO, gameDAO);
-        CreateGameResult createGameResult = new CreateGameResult(0);
-        try {
-            createGameResult = gameService.createGame(createGameRequest);
-        } catch (DataAccessException e) {
-            System.out.println("failed to create game");
-        }
+        RegisterResult userInfo = generateUserInfo(userService);
+        CreateGameResult createGameResult = generateCreateGameResult(userInfo, gameService);
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, "WHITE", createGameResult.gameID());
+        JoinGameRequest joinGameRequest = new JoinGameRequest(userInfo.authToken(), "WHITE", createGameResult.gameID());
 
         //expected
 
@@ -115,23 +124,11 @@ public class GameServiceTests {
         GameDAO gameDAO = new MemoryGameDAO();
 
         UserService userService = new UserService(userDao, authDAO, gameDAO);
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        RegisterResult userInfo = null;
-        try {
-            userInfo = userService.register(registerRequest);
-        } catch (DataAccessException e) {}
-
-        String authToken = userInfo.authToken();
-        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, "gameName");
         GameService gameService = new GameService(userDao, authDAO, gameDAO);
-        CreateGameResult createGameResult = new CreateGameResult(0);
-        try {
-            createGameResult = gameService.createGame(createGameRequest);
-        } catch (DataAccessException e) {
-            System.out.println("failed to create game");
-        }
+        RegisterResult userInfo = generateUserInfo(userService);
+        CreateGameResult createGameResult = generateCreateGameResult(userInfo, gameService);
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, "WHITE", createGameResult.gameID());
+        JoinGameRequest joinGameRequest = new JoinGameRequest(userInfo.authToken(), "WHITE", createGameResult.gameID());
 
         //expected
         DataAccessException expected = new DataAccessException("Error: already taken");
