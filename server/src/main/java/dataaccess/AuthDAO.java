@@ -5,8 +5,8 @@ import model.AuthData;
 import java.util.UUID;
 
 public interface AuthDAO {
-    void createAuth(AuthData authData);
-    AuthData findAuth(String authToken);
-    void deleteAuth(String authToken);
-    void clear();
+    void createAuth(AuthData authData) throws DataAccessException;
+    AuthData findAuth(String authToken) throws DataAccessException;
+    void deleteAuth(String authToken) throws DataAccessException;
+    void clear() throws DataAccessException;
 }

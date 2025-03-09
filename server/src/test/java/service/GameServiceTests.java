@@ -4,7 +4,6 @@ import dataaccess.*;
 import model.GameData;
 import org.junit.jupiter.api.Test;
 import requestresult.*;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -18,7 +17,7 @@ public class GameServiceTests {
         RegisterResult registerResult = null;
         try {
             registerResult = userService.register(registerRequest);
-        } catch (DataAccessException e) {}
+        } catch (ServiceException e) {}
 
         return registerResult;
     }
@@ -41,7 +40,7 @@ public class GameServiceTests {
 
         //then
             assertTrue(answer.gameID() > 0);
-        } catch (DataAccessException e) {}
+        } catch (ServiceException e) {}
 
     }
 
@@ -52,14 +51,14 @@ public class GameServiceTests {
         CreateGameRequest request = new CreateGameRequest(authToken, "gameName");
 
         //expected
-        DataAccessException expected = new DataAccessException("Error: unauthorized");
+        UnauthorizedException expected = new UnauthorizedException();
 
         //when
         try {
             GameService gameService = new GameService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
             gameService.createGame(request);
 
-        } catch (DataAccessException e) {
+        } catch (ServiceException e) {
 
         //then
             assertEquals(e.getMessage(), expected.getMessage());
@@ -72,7 +71,7 @@ public class GameServiceTests {
         RegisterResult userInfo = null;
         try {
             userInfo = userService.register(registerRequest);
-        } catch (DataAccessException e) {}
+        } catch (ServiceException e) {}
         return userInfo;
     }
 
@@ -82,7 +81,7 @@ public class GameServiceTests {
         CreateGameResult createGameResult = new CreateGameResult(0);
         try {
             createGameResult = gameService.createGame(createGameRequest);
-        } catch (DataAccessException e) {
+        } catch (ServiceException e) {
             System.out.println("failed to create game");
         }
         return createGameResult;
@@ -107,12 +106,14 @@ public class GameServiceTests {
         //when
         try {
             gameService.joinGame(joinGameRequest);
-        } catch (DataAccessException e) {
+        } catch (ServiceException e) {
             System.out.println("failed to join game");
         }
 
         //then
-        assert Objects.equals(gameDAO.findGame(createGameResult.gameID()).whiteUsername(), userInfo.username());
+        try {
+            assert Objects.equals(gameDAO.findGame(createGameResult.gameID()).whiteUsername(), userInfo.username());
+        } catch (DataAccessException e) {}
 
     }
 
@@ -131,13 +132,13 @@ public class GameServiceTests {
         JoinGameRequest joinGameRequest = new JoinGameRequest(userInfo.authToken(), "WHITE", createGameResult.gameID());
 
         //expected
-        DataAccessException expected = new DataAccessException("Error: already taken");
+        AlreadyTakenException expected = new AlreadyTakenException();
 
         //when
         try {
             gameService.joinGame(joinGameRequest);
             gameService.joinGame(joinGameRequest);
-        } catch (DataAccessException e) {
+        } catch (ServiceException e) {
 
         //then
             assert Objects.equals(e.getMessage(), expected.getMessage());
@@ -156,7 +157,7 @@ public class GameServiceTests {
         RegisterResult userInfo = null;
         try {
             userInfo = userService.register(registerRequest);
-        } catch (DataAccessException e) {}
+        } catch (ServiceException e) {}
 
         String authToken = userInfo.authToken();
         CreateGameRequest createGameRequest1 = new CreateGameRequest(authToken, "gameName1");
@@ -164,14 +165,17 @@ public class GameServiceTests {
         CreateGameResult createGameResult1 = new CreateGameResult(0);
         try {
             createGameResult1 = gameService.createGame(createGameRequest1);
-        } catch (DataAccessException e) {
+        } catch (ServiceException e) {
             System.out.println("failed to create game");
         }
 
         ListGamesRequest listGamesRequest = new ListGamesRequest(authToken);
 
         //expected
-        GameData gameData1 = gameDAO.findGame(createGameResult1.gameID());
+        GameData gameData1 = null;
+        try {
+            gameData1 = gameDAO.findGame(createGameResult1.gameID());
+        } catch (DataAccessException e) {}
         ArrayList<GameData> games = new ArrayList<>();
         games.add(gameData1);
         ListGamesResult expected = new ListGamesResult(games);
@@ -183,7 +187,7 @@ public class GameServiceTests {
 
         //then
             assertEquals(listGamesResult, expected);
-        } catch (DataAccessException e) {}
+        } catch (ServiceException e) {}
 
     }
 
@@ -199,7 +203,7 @@ public class GameServiceTests {
         RegisterResult userInfo = null;
         try {
             userInfo = userService.register(registerRequest);
-        } catch (DataAccessException e) {}
+        } catch (ServiceException e) {}
 
         String authToken = userInfo.authToken();
         CreateGameRequest createGameRequest1 = new CreateGameRequest(authToken, "gameName1");
@@ -210,25 +214,29 @@ public class GameServiceTests {
         try {
             createGameResult1 = gameService.createGame(createGameRequest1);
             createGameResult2 = gameService.createGame(createGameRequest1);
-        } catch (DataAccessException e) {
+        } catch (ServiceException e) {
             System.out.println("failed to create game");
         }
 
         ListGamesRequest listGamesRequest = new ListGamesRequest("authToken");
 
         //expected
-        GameData gameData1 = gameDAO.findGame(createGameResult1.gameID());
-        GameData gameData2 = gameDAO.findGame(createGameResult2.gameID());
+        GameData gameData1 = null;
+        GameData gameData2 = null;
+        try {
+            gameData1 = gameDAO.findGame(createGameResult1.gameID());
+            gameData2 = gameDAO.findGame(createGameResult2.gameID());
+        } catch (DataAccessException e) {}
         GameData[] games = {gameData1, gameData2};
 
-        DataAccessException expected = new DataAccessException("Error: unauthorized");
+        UnauthorizedException expected = new UnauthorizedException();
 
 
         //when
         ListGamesResult listGamesResult;
         try {
             listGamesResult = gameService.listGames(listGamesRequest);
-        } catch (DataAccessException e) {
+        } catch (ServiceException e) {
 
         //then
             assert Objects.equals(e.getMessage(), expected.getMessage());
