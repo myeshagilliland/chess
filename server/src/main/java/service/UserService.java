@@ -1,5 +1,6 @@
 package service;
 
+import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
@@ -24,57 +25,82 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
-    private String authenticate(String username) {
+    private String authenticate(String username) throws DataAccessException {
         String authToken = generateToken();
         AuthData authData = new AuthData(authToken, username);
         authDAO.createAuth(authData);
         return authToken;
     }
 
-    public RegisterResult register(RegisterRequest req) throws DataAccessException {
+    public RegisterResult register(RegisterRequest req) throws ServiceException {
 
-        if (userDAO.findUser(req.username()) != null) {
-            throw new DataAccessException("Error: already taken");
+        try {
+
+            if (req.username() == null || req.password() == null || req.email() == null) {
+                throw new BadRequestException();
+            }
+
+            if (userDAO.findUser(req.username()) != null) {
+//                throw new DataAccessException("Error: already taken");
+                throw new AlreadyTakenException();
+            }
+
+            UserData userData = new UserData(req.username(), req.password(), req.email());
+            userDAO.createUser(userData);
+
+            String authToken = authenticate(req.username());
+
+            return new RegisterResult(req.username(), authToken);
+        } catch (DataAccessException e) {
+            throw new ServiceException(e.getMessage());
         }
-
-        UserData userData = new UserData(req.username(), req.password(), req.email());
-        userDAO.createUser(userData);
-
-        String authToken = authenticate(req.username());
-
-        return new RegisterResult(req.username(), authToken);
     }
 
-    public LoginResult login(LoginRequest req) throws DataAccessException {
+    public LoginResult login(LoginRequest req) throws ServiceException {
 
-        UserData user = userDAO.findUser(req.username());
+        try {
+            UserData user = userDAO.findUser(req.username());
 
-        if (user == null || !Objects.equals(req.password(), user.password())) {
-            throw new DataAccessException("Error: unauthorized");
+            if (user == null || !Objects.equals(req.password(), user.password())) {
+//                throw new DataAccessException("Error: unauthorized");
+                throw new UnauthorizedException();
+            }
+
+            String authToken = authenticate(req.username());
+
+            return new LoginResult(req.username(), authToken);
+        } catch (DataAccessException e) {
+            throw new ServiceException(e.getMessage());
         }
-
-        String authToken = authenticate(req.username());
-
-        return new LoginResult(req.username(), authToken);
     }
 
-    public LogoutResult logout(LogoutRequest req) throws DataAccessException {
+    public LogoutResult logout(LogoutRequest req) throws ServiceException {
 
-        if (authDAO.findAuth(req.authToken()) == null) {
-            throw new DataAccessException("Error: unauthorized");
+        try {
+
+            if (authDAO.findAuth(req.authToken()) == null) {
+//                throw new DataAccessException("Error: unauthorized");
+                throw new UnauthorizedException();
+            }
+
+            authDAO.deleteAuth(req.authToken());
+
+            return new LogoutResult();
+        } catch (DataAccessException e) {
+            throw new ServiceException(e.getMessage());
         }
-
-        authDAO.deleteAuth(req.authToken());
-
-        return new LogoutResult();
     }
 
-    public ClearResult clear(ClearRequest req) throws DataAccessException {
-        userDAO.clear();
-        authDAO.clear();
-        gameDAO.clear();
+    public ClearResult clear(ClearRequest req) throws ServiceException {
+        try {
+            userDAO.clear();
+            authDAO.clear();
+            gameDAO.clear();
 
-        return new ClearResult();
+            return new ClearResult();
+        } catch (DataAccessException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
 }
