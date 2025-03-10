@@ -2,7 +2,6 @@ package server;
 
 import dataaccess.*;
 import handler.*;
-import requestresult.CreateGameResult;
 import service.GameService;
 import service.UserService;
 import spark.*;
@@ -20,7 +19,7 @@ public class Server {
         setServices();
 
         // Register your endpoints and handle exceptions here.
-//        Spark.post("/user", this::register); // new RegisterHandler() (implements Route)
+//        Spark.post("/user", this::register);
         Spark.post("/user", new RegisterHandler(userService));
 //        Spark.delete("/db", this::clear);
         Spark.delete("/db", new ClearHandler(userService));
