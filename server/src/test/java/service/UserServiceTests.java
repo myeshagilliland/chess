@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import requestresult.*;
 
@@ -12,10 +13,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
+//    @AfterEach
+    //need to do these to set and clear database
+
+
     @Test
     public void testRegisterPositive() {
         //given
-        RegisterRequest request = new RegisterRequest("name", "pwd", "me@mail");
+        RegisterRequest request = new RegisterRequest("name", "pwd", "email");
 
         //expected
         RegisterResult expected = new RegisterResult("name", "authToken");
@@ -35,25 +40,24 @@ public class UserServiceTests {
             assertEquals(expected.username(), answer.username());
             assertNotNull(answer.authToken());
         } catch (ServiceException e) {}
-
     }
 
     @Test
     public void testRegisterNegative() {
         //given
-        RegisterRequest req = new RegisterRequest("name", "pwd", "me@mail");
+        RegisterRequest req = new RegisterRequest("name", "pwd", "email");
 
         //expected
 //        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
         UserService userService = null;
         try {
             userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
-        } catch (DataAccessException e) {}
+        } catch (DataAccessException e) { System.out.println("got here");}
         assertNotNull(userService);
         try {
             userService.register(req);
         } catch (ServiceException e) {
-            System.out.println("Failed to register first request"); //this is executing, why?
+            System.out.println("Failed to register first request");
         }
         AlreadyTakenException expected = new AlreadyTakenException();
 
@@ -175,11 +179,13 @@ public class UserServiceTests {
 //        GameDAO gameDAO = new MemoryGameDAO();
 
         UserDAO userDAO = null;
+        AuthDAO authDAO = null;
+        GameDAO gameDAO = null;
         try {
             userDAO = new SQLUserDAO();
+            authDAO = new SQLAuthDAO();
+            gameDAO = new SQLGameDAO();
         } catch (DataAccessException e) {}
-        AuthDAO authDAO = new SQLAuthDAO();
-        GameDAO gameDAO = new SQLGameDAO();
 
 //        UserService userService = new UserService(userDao, authDAO, gameDAO);
         UserService userService = null;
