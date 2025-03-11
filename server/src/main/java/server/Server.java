@@ -43,10 +43,25 @@ public class Server {
         Spark.awaitStop();
     }
 
+//    private void setServices() {
+//        UserDAO userDAO = new MemoryUserDAO();
+//        AuthDAO authDAO = new MemoryAuthDao(); // why lowercase??
+//        GameDAO gameDAO = new MemoryGameDAO();
+//        userService = new UserService(userDAO, authDAO, gameDAO);
+//        gameService = new GameService(userDAO, authDAO, gameDAO);
+//    }
+
     private void setServices() {
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDao();
-        GameDAO gameDAO = new MemoryGameDAO();
+        UserDAO userDAO = null;
+        AuthDAO authDAO = null;
+        GameDAO gameDAO = null;
+        try {
+            userDAO = new SQLUserDAO();
+            authDAO = new SQLAuthDAO();
+            gameDAO = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         userService = new UserService(userDAO, authDAO, gameDAO);
         gameService = new GameService(userDAO, authDAO, gameDAO);
     }
