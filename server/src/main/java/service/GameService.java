@@ -79,9 +79,9 @@ public class GameService {
 
             GameData updatedGameData;
             if (Objects.equals(req.playerColor(), "WHITE")) {
-                updatedGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+                updatedGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.chessGame());
             } else {
-                updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
+                updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.chessGame());
             }
 
             gameDAO.updateGame(updatedGameData);
