@@ -60,7 +60,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public AuthData findAuth(String authToken) throws DataAccessException {
-        var statement = "SELECT * FROM auth WHERE authToken = ?";
+        var statement = "SELECT * FROM auth WHERE authToken=?";
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
@@ -80,7 +80,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-        var statement = "DELETE FROM auth WHERE authToken = ?";
+        var statement = "DELETE FROM auth WHERE authToken=?";
         executeStatement(statement, "Unable to delete auth: ", authToken);
     }
 
