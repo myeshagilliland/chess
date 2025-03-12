@@ -4,21 +4,13 @@ import model.AuthData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import static dataaccess.DatabaseManager.freshStart;
 
 public class SQLAuthDAOTests {
 
     @BeforeEach
-    void freshStart() {
-        try {
-            UserDAO userDao = new SQLUserDAO();
-            AuthDAO authDao = new SQLAuthDAO();
-            GameDAO gameDao = new SQLGameDAO();
-            userDao.clear();
-            authDao.clear();
-            gameDao.clear();
-        } catch (DataAccessException e) {
-            System.out.println("failed to clear database");
-        }
+    void clearDatabase() {
+        freshStart();
     }
 
     @Test

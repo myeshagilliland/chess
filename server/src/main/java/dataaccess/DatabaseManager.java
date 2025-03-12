@@ -105,4 +105,17 @@ public class DatabaseManager {
             throw new DataAccessException(errorMessageIntro + e.getMessage());
         }
     }
+
+    public static void freshStart() {
+        try {
+            UserDAO userDao = new SQLUserDAO();
+            AuthDAO authDao = new SQLAuthDAO();
+            GameDAO gameDao = new SQLGameDAO();
+            userDao.clear();
+            authDao.clear();
+            gameDao.clear();
+        } catch (DataAccessException e) {
+            System.out.println("failed to clear database");
+        }
+    }
 }
