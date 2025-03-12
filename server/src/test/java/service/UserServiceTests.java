@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import requestresult.*;
 import java.util.Collection;
@@ -10,8 +11,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
-//    @AfterEach
-    //need to do these to set and clear database
+    @BeforeEach
+    void freshStart() {
+        try {
+            UserDAO userDao = new SQLUserDAO();
+            AuthDAO authDao = new SQLAuthDAO();
+            GameDAO gameDao = new SQLGameDAO();
+            userDao.clear();
+            authDao.clear();
+            gameDao.clear();
+        } catch (DataAccessException e) {
+            System.out.println("failed to clear database");
+        }
+    }
 
 
     @Test

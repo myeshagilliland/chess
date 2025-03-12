@@ -67,28 +67,9 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-//        var statement = "INSERT INTO pet (name, type, json) VALUES (?, ?, ?)";
-//        var json = new Gson().toJson(pet);
-//        var id = executeUpdate(statement, pet.name(), pet.type(), json);
-//        return new Pet(id, pet.name(), pet.type());
-//        var statement = STR."INSERT INTO user (username, password, email) VALUES (\{
-//                userData.username()}, \{
-//                userData.password()}, \{
-//                userData.email()})";
-
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
         String encryptedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
         executeStatement(statement, "Unable to create user: ", userData.username(), encryptedPassword, userData.email());
-//        executeUpdate(statement, userData.username(), userData.password(), userData.email()); START HERE
-//        statement.executeUpdate();
-
-//        try (var conn = DatabaseManager.getConnection()) {
-//            try (var preparedStatement = conn.prepareStatement(statement)) {
-//                preparedStatement.executeUpdate();
-//            }
-//        } catch (SQLException e) {
-//            throw new DataAccessException("Unable to create user: " + e.getMessage());
-//        }
     }
 
     @Override
@@ -110,7 +91,7 @@ public class SQLUserDAO implements UserDAO {
                 } else { return null; }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to find User" + e.getMessage());
+            throw new DataAccessException("Unable to find User: " + e.getMessage());
         }
 //        ResultSet resultSet = executeStatement(statement, "Unable to find user: ");
 //        return null;
