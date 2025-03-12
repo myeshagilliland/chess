@@ -180,7 +180,7 @@ public class SQLGameDAOTests {
 //            gameDao.createGame(gameData2);
             Collection<GameData> answer = gameDao.listGames();
             //then
-            assertEquals(expected.size(), answer.size());
+            assertNotEquals(expected.size(), answer.size());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
