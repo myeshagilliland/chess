@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,6 +56,11 @@ public class SQLUserDAO implements UserDAO {
     }
 
 
+//    public String encryptPassword (String password) {
+//        return BCrypt.hashpw(password, BCrypt.gensalt());
+//    }
+
+//BCrypt.checkpw(providedClearTextPassword, hashedPassword);
 
 
 
@@ -71,7 +77,8 @@ public class SQLUserDAO implements UserDAO {
 //                userData.email()})";
 
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        executeStatement(statement, "Unable to create user: ", userData.username(), userData.password(), userData.email());
+        String encryptedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+        executeStatement(statement, "Unable to create user: ", userData.username(), encryptedPassword, userData.email());
 //        executeUpdate(statement, userData.username(), userData.password(), userData.email()); START HERE
 //        statement.executeUpdate();
 

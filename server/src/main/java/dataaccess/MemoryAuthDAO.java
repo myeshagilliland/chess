@@ -4,7 +4,7 @@ import model.AuthData;
 
 import java.util.HashMap;
 
-public class MemoryAuthDao implements AuthDAO {
+public class MemoryAuthDAO implements AuthDAO {
     // authToken: authData (authToken, username)
     private HashMap<String, AuthData> authDatabase = new HashMap<String, AuthData>();
 

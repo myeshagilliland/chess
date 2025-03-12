@@ -3,12 +3,9 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import requestresult.*;
-
 import java.util.Collection;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
@@ -28,7 +25,7 @@ public class UserServiceTests {
         //when
         RegisterResult answer;
         try {
-//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
             UserService userService = null;
             try {
                 userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -48,7 +45,7 @@ public class UserServiceTests {
         RegisterRequest req = new RegisterRequest("name", "pwd", "email");
 
         //expected
-//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
         UserService userService = null;
         try {
             userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -83,7 +80,7 @@ public class UserServiceTests {
         //when
         LoginResult answer;
         try {
-//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
             UserService userService = null;
             try {
                 userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -107,7 +104,7 @@ public class UserServiceTests {
         UnauthorizedException expected = new UnauthorizedException();
 
         //when
-//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
         UserService userService = null;
         try {
             userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -132,7 +129,7 @@ public class UserServiceTests {
 
         //when
         try {
-//            AuthDAO authDAO = new MemoryAuthDao();
+//            AuthDAO authDAO = new MemoryAuthDAO();
             AuthDAO authDAO = new SQLAuthDAO();
 //            UserService userService = new UserService(new MemoryUserDAO(), authDAO, new MemoryGameDAO());
             UserService userService = null;
@@ -157,7 +154,7 @@ public class UserServiceTests {
 
         //when
         try {
-//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
             UserService userService = null;
             try {
                 userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -175,7 +172,7 @@ public class UserServiceTests {
     public void testClearPositive() {
         //given
 //        UserDAO userDAO = new MemoryUserDAO();
-//        AuthDAO authDAO = new MemoryAuthDao();
+//        AuthDAO authDAO = new MemoryAuthDAO();
 //        GameDAO gameDAO = new MemoryGameDAO();
 
         UserDAO userDAO = null;

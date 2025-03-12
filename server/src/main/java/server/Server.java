@@ -45,7 +45,7 @@ public class Server {
 
 //    private void setServices() {
 //        UserDAO userDAO = new MemoryUserDAO();
-//        AuthDAO authDAO = new MemoryAuthDao(); // why lowercase??
+//        AuthDAO authDAO = new MemoryAuthDAO(); // why lowercase??
 //        GameDAO gameDAO = new MemoryGameDAO();
 //        userService = new UserService(userDAO, authDAO, gameDAO);
 //        gameService = new GameService(userDAO, authDAO, gameDAO);
