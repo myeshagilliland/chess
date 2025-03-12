@@ -37,7 +37,6 @@ public class UserServiceTests {
         //when
         RegisterResult answer;
         try {
-//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
             UserService userService = null;
             try {
                 userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -57,7 +56,6 @@ public class UserServiceTests {
         RegisterRequest req = new RegisterRequest("name", "pwd", "email");
 
         //expected
-//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
         UserService userService = null;
         try {
             userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -92,7 +90,6 @@ public class UserServiceTests {
         //when
         LoginResult answer;
         try {
-//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
             UserService userService = null;
             try {
                 userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -116,7 +113,6 @@ public class UserServiceTests {
         UnauthorizedException expected = new UnauthorizedException();
 
         //when
-//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
         UserService userService = null;
         try {
             userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -141,9 +137,7 @@ public class UserServiceTests {
 
         //when
         try {
-//            AuthDAO authDAO = new MemoryAuthDAO();
             AuthDAO authDAO = new SQLAuthDAO();
-//            UserService userService = new UserService(new MemoryUserDAO(), authDAO, new MemoryGameDAO());
             UserService userService = null;
             try {
                 userService = new UserService(new SQLUserDAO(), authDAO, new SQLGameDAO());
@@ -166,7 +160,6 @@ public class UserServiceTests {
 
         //when
         try {
-//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
             UserService userService = null;
             try {
                 userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
@@ -183,10 +176,6 @@ public class UserServiceTests {
     @Test
     public void testClearPositive() {
         //given
-//        UserDAO userDAO = new MemoryUserDAO();
-//        AuthDAO authDAO = new MemoryAuthDAO();
-//        GameDAO gameDAO = new MemoryGameDAO();
-
         UserDAO userDAO = null;
         AuthDAO authDAO = null;
         GameDAO gameDAO = null;
@@ -196,7 +185,6 @@ public class UserServiceTests {
             gameDAO = new SQLGameDAO();
         } catch (DataAccessException e) {}
 
-//        UserService userService = new UserService(userDao, authDAO, gameDAO);
         UserService userService = null;
         try {
             userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());

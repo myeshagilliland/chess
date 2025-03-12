@@ -1,14 +1,11 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Collection;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLGameDAOTests {
@@ -32,7 +29,8 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData = new GameData(123, "white", "black", "name", new ChessGame());
+            GameData gameData = new GameData(123, "white", "black",
+                    "name", new ChessGame());
             //expected
             GameData expected = gameData;
             //when
@@ -50,7 +48,8 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData = new GameData(123, "white", "black", "name", new ChessGame());
+            GameData gameData = new GameData(123, "white", "black",
+                    "name", new ChessGame());
             //expected
             DataAccessException expected = new DataAccessException(
                     "Unable to create game: Duplicate entry '123' for key 'game.PRIMARY'");
@@ -72,7 +71,8 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData = new GameData(123, "white", "black", "name", new ChessGame());
+            GameData gameData = new GameData(123, "white", "black",
+                    "name", new ChessGame());
             gameDao.createGame(gameData);
             //expected
             GameData expected = gameData;
@@ -109,10 +109,12 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData = new GameData(123, null, "black", "name", new ChessGame());
+            GameData gameData = new GameData(123, null, "black",
+                    "name", new ChessGame());
             gameDao.createGame(gameData);
             //expected
-            GameData expected = new GameData(123, "white", "black", "name", gameData.chessGame());
+            GameData expected = new GameData(123, "white", "black",
+                    "name", gameData.chessGame());
             //when
             gameDao.updateGame(expected);
             GameData answer = gameDao.findGame(123);
@@ -128,10 +130,12 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData = new GameData(123, null, "black", "name", new ChessGame());
+            GameData gameData = new GameData(123, null, "black",
+                    "name", new ChessGame());
             gameDao.createGame(gameData);
             //expected
-            GameData expected = new GameData(111, "white", "black", "name", gameData.chessGame());
+            GameData expected = new GameData(111, "white", "black",
+                    "name", gameData.chessGame());
             //when
             gameDao.updateGame(expected);
             GameData answer = gameDao.findGame(123);
@@ -147,8 +151,10 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData1 = new GameData(123, "white1", "black1", "name1", new ChessGame());
-            GameData gameData2 = new GameData(456, "white2", "black2", "name2", new ChessGame());
+            GameData gameData1 = new GameData(123, "white1", "black1",
+                    "name1", new ChessGame());
+            GameData gameData2 = new GameData(456, "white2", "black2",
+                    "name2", new ChessGame());
             //expected
             Collection<GameData> expected = new ArrayList<>();
             expected.add(gameData1);
@@ -169,15 +175,16 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData1 = new GameData(123, "white1", "black1", "name1", new ChessGame());
-            GameData gameData2 = new GameData(456, "white2", "black2", "name2", new ChessGame());
+            GameData gameData1 = new GameData(123, "white1", "black1",
+                    "name1", new ChessGame());
+            GameData gameData2 = new GameData(456, "white2", "black2",
+                    "name2", new ChessGame());
             //expected
             Collection<GameData> expected = new ArrayList<>();
             expected.add(gameData1);
             expected.add(gameData2);
             //when
             gameDao.createGame(gameData1);
-//            gameDao.createGame(gameData2);
             Collection<GameData> answer = gameDao.listGames();
             //then
             assertNotEquals(expected.size(), answer.size());
@@ -191,7 +198,8 @@ public class SQLGameDAOTests {
         try {
             //given
             GameDAO gameDao = new SQLGameDAO();
-            GameData gameData = new GameData(123, "white", "black", "name", new ChessGame());
+            GameData gameData = new GameData(123, "white", "black",
+                    "name", new ChessGame());
             //expected
             GameData expected = null;
             //when
