@@ -3,7 +3,6 @@ package dataaccess;
 import model.AuthData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLAuthDAOTests {
@@ -142,19 +141,15 @@ public class SQLAuthDAOTests {
             AuthDAO authDao = new SQLAuthDAO();
             AuthData authData = new AuthData("authToken", "userName");
             //expected
-            DataAccessException expected = new DataAccessException(
-                    "Unable to create auth: Duplicate entry 'authToken' for key 'auth.PRIMARY'");
+            AuthData expected = null;
             //when
             authDao.createAuth(authData);
             AuthData auth = authDao.findAuth("authToken");
             assertNotNull(auth);
             authDao.clear();
-            try {
-                authDao.findAuth("authToken");
-            } catch (DataAccessException e) {
+            AuthData answer = authDao.findAuth("authToken");
             //then
-                assertEquals(expected.getMessage(), e.getMessage());
-            }
+            assertEquals(expected, answer);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
