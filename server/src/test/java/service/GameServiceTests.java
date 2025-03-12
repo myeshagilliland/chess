@@ -230,17 +230,17 @@ public class GameServiceTests {
     @Test
     public void listGamesNegative() {
         //given
-        UserDAO userDao = null;
-        AuthDAO authDao = null;
-        GameDAO gameDao = null;
+        UserDAO userDao1 = null;
+        AuthDAO authDao1 = null;
+        GameDAO gameDao1 = null;
         try {
-            userDao = new SQLUserDAO();
-            authDao = new SQLAuthDAO();
-            gameDao = new SQLGameDAO();
+            userDao1 = new SQLUserDAO();
+            authDao1 = new SQLAuthDAO();
+            gameDao1 = new SQLGameDAO();
         } catch (DataAccessException e) {}
 
-        UserService userService = new UserService(userDao, authDao, gameDao);
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        UserService userService = new UserService(userDao1, authDao1, gameDao1);
+        RegisterRequest registerRequest = new RegisterRequest("name", "pwd", "email");
         RegisterResult userInfo = null;
         try {
             userInfo = userService.register(registerRequest);
@@ -249,12 +249,12 @@ public class GameServiceTests {
         String authToken = userInfo.authToken();
         CreateGameRequest createGameRequest1 = new CreateGameRequest(authToken, "gameName1");
         CreateGameRequest createGameRequest2 = new CreateGameRequest(authToken, "gameName2");
-        GameService gameService = new GameService(userDao, authDao, gameDao);
+        GameService gameService = new GameService(userDao1, authDao1, gameDao1);
         CreateGameResult createGameResult1 = new CreateGameResult(0);
         CreateGameResult createGameResult2 = new CreateGameResult(0);
         try {
             createGameResult1 = gameService.createGame(createGameRequest1);
-            createGameResult2 = gameService.createGame(createGameRequest1);
+            createGameResult2 = gameService.createGame(createGameRequest2);
         } catch (ServiceException e) {
             System.out.println("failed to create game");
         }
@@ -265,8 +265,8 @@ public class GameServiceTests {
         GameData gameData1 = null;
         GameData gameData2 = null;
         try {
-            gameData1 = gameDao.findGame(createGameResult1.gameID());
-            gameData2 = gameDao.findGame(createGameResult2.gameID());
+            gameData1 = gameDao1.findGame(createGameResult1.gameID());
+            gameData2 = gameDao1.findGame(createGameResult2.gameID());
         } catch (DataAccessException e) {}
         GameData[] games = {gameData1, gameData2};
 
