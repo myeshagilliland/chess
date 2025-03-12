@@ -1,7 +1,12 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
+
 import java.sql.*;
 import java.util.Properties;
+
+import static java.sql.Types.NULL;
 
 public class DatabaseManager {
     private static final String DATABASE_NAME;
@@ -67,6 +72,37 @@ public class DatabaseManager {
             return conn;
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    static void configureDatabase(String[] createDatabaseStatements) throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createDatabaseStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to configure database: " + e.getMessage());
+        }
+    }
+
+    static void executeStatement(String statement, String errorMessageIntro, Object... params)
+            throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                for (var i = 1; i <= params.length; i++) {
+                    var param = params[i-1];
+                    if (param instanceof String p) {preparedStatement.setString(i, p);}
+                    else if (param instanceof Integer p) {preparedStatement.setInt(i, p);}
+                    else if (param instanceof ChessGame p) {preparedStatement.setString(i, new Gson().toJson(p));}
+                    else if (param == null) {preparedStatement.setNull(i, NULL);}
+                }
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(errorMessageIntro + e.getMessage());
         }
     }
 }

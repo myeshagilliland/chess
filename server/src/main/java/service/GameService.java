@@ -1,7 +1,6 @@
 package service;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -9,8 +8,6 @@ import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
 import requestresult.*;
-
-import javax.xml.crypto.Data;
 import java.util.*;
 
 public class GameService {
@@ -62,26 +59,23 @@ public class GameService {
             AuthData authData = authDAO.findAuth(req.authToken());
             if (authData == null) {
                 throw new UnauthorizedException();
-//                throw new DataAccessException("Error: unauthorized");
             }
 
             GameData gameData = gameDAO.findGame(req.gameID());
-//            if (gameData == null) {
-//                throw new DataAccessException("Error: game does not exist");
-//            }
 
             boolean whiteTaken = (Objects.equals(req.playerColor(), "WHITE") & gameData.whiteUsername() != null);
             boolean blackTaken = (Objects.equals(req.playerColor(), "BLACK") & gameData.blackUsername() != null);
             if (whiteTaken || blackTaken) {
                 throw new AlreadyTakenException();
-//                throw new DataAccessException("Error: already taken");
             }
 
             GameData updatedGameData;
             if (Objects.equals(req.playerColor(), "WHITE")) {
-                updatedGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.chessGame());
+                updatedGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(),
+                        gameData.gameName(), gameData.chessGame());
             } else {
-                updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.chessGame());
+                updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(),
+                        gameData.gameName(), gameData.chessGame());
             }
 
             gameDAO.updateGame(updatedGameData);
@@ -98,7 +92,6 @@ public class GameService {
             AuthData authData = authDAO.findAuth(req.authToken());
             if (authData == null) {
                 throw new UnauthorizedException();
-//                throw new DataAccessException("Error: unauthorized");
             }
 
             Collection<GameData> gamesCollection = gameDAO.listGames();

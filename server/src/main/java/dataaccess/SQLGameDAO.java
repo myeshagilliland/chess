@@ -7,12 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.sql.Types.NULL;
+import static dataaccess.DatabaseManager.configureDatabase;
+import static dataaccess.DatabaseManager.executeStatement;
 
 public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws DataAccessException {
-        configureDatabase();
+        configureDatabase(createDatabaseStatements);
     }
 
     private final String[] createDatabaseStatements = {
@@ -26,38 +27,7 @@ public class SQLGameDAO implements GameDAO {
               PRIMARY KEY (`gameID`)
             )
             """
-            // used to be `game` TEXT DEFAULT NULL,
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createDatabaseStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Unable to configure database: " + e.getMessage());
-        }
-    }
-
-    private void executeStatement(String statement, String errorMessageIntro, Object... params) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                for (var i = 1; i <= params.length; i++) {
-                    var param = params[i-1];
-                    if (param instanceof String p) preparedStatement.setString(i, p);
-                    else if (param instanceof Integer p) preparedStatement.setInt(i, p);
-                    else if (param instanceof ChessGame p) preparedStatement.setString(i, new Gson().toJson(p)); //serialization needed
-                    else if (param == null) preparedStatement.setNull(i, NULL);
-                }
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(errorMessageIntro + e.getMessage());
-        }
-    }
 
     @Override
     public void createGame(GameData gameData) throws DataAccessException {
@@ -82,7 +52,7 @@ public class SQLGameDAO implements GameDAO {
                             resultSet.getString("whiteUsername"),
                             resultSet.getString("blackUsername"),
                             resultSet.getString("gameName"),
-                            new Gson().fromJson(resultSet.getString("chessGame"), ChessGame.class) //serializing chessGame
+                            new Gson().fromJson(resultSet.getString("chessGame"), ChessGame.class)
                     );
                     return gameData;
                 } else { return null; }
@@ -114,10 +84,9 @@ public class SQLGameDAO implements GameDAO {
                             resultSet.getString("whiteUsername"),
                             resultSet.getString("blackUsername"),
                             resultSet.getString("gameName"),
-                            new Gson().fromJson(resultSet.getString("chessGame"), ChessGame.class) //serializing chessGame
+                            new Gson().fromJson(resultSet.getString("chessGame"), ChessGame.class)
                     );
                     gamesList.add(gameData);
-//                    resultSet.next();
                 }
             }
         } catch (SQLException e) {

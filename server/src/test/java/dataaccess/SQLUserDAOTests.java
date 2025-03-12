@@ -3,7 +3,6 @@ package dataaccess;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLUserDAOTests {
@@ -29,16 +28,11 @@ public class SQLUserDAOTests {
             UserDAO userDao = new SQLUserDAO();
             UserData userData = new UserData("userName", "pwd", "mail");
             //expected
-//            String encryptedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
-//            BCrypt.checkpw(userData.password(), encryptedPassword);
-//            UserData expected = new UserData(userData.username(), encryptedPassword, userData.email());
             UserData expected = userData;
             //when
             userDao.createUser(userData);
             //then
             UserData answer = userDao.findUser("userName");
-//            assertEquals(expected, answer);
-//            assertTrue(BCrypt.checkpw(answer.password(), encryptedPassword));
             assertEquals(expected.email(), answer.email());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);

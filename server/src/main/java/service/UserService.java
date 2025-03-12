@@ -1,13 +1,10 @@
 package service;
 
-import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import requestresult.*;
-
-import java.util.Objects;
 import java.util.UUID;
 
 public class UserService {
@@ -42,7 +39,6 @@ public class UserService {
             }
 
             if (userDAO.findUser(req.username()) != null) {
-//                throw new DataAccessException("Error: already taken");
                 throw new AlreadyTakenException();
             }
 
@@ -62,9 +58,7 @@ public class UserService {
         try {
             UserData user = userDAO.findUser(req.username());
 
-//            if (user == null || !Objects.equals(req.password(), user.password())) {
             if (user == null || !BCrypt.checkpw(req.password(), user.password())) {
-//                throw new DataAccessException("Error: unauthorized");
                 throw new UnauthorizedException();
             }
 
@@ -81,7 +75,6 @@ public class UserService {
         try {
 
             if (authDAO.findAuth(req.authToken()) == null) {
-//                throw new DataAccessException("Error: unauthorized");
                 throw new UnauthorizedException();
             }
 

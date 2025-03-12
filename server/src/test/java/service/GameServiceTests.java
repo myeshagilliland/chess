@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import requestresult.*;
 import java.util.ArrayList;
 import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTests {
@@ -167,7 +166,8 @@ public class GameServiceTests {
         RegisterResult userInfo = generateUserInfo(userService);
         CreateGameResult createGameResult = generateCreateGameResult(userInfo, gameService);
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(userInfo.authToken(), "WHITE", createGameResult.gameID());
+        JoinGameRequest joinGameRequest = new JoinGameRequest(userInfo.authToken(), "WHITE",
+                createGameResult.gameID());
 
         //expected
         AlreadyTakenException expected = new AlreadyTakenException();
