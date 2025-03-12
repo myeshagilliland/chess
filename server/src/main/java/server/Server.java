@@ -2,7 +2,6 @@ package server;
 
 import dataaccess.*;
 import handler.*;
-import requestresult.CreateGameResult;
 import service.GameService;
 import service.UserService;
 import spark.*;
@@ -20,7 +19,7 @@ public class Server {
         setServices();
 
         // Register your endpoints and handle exceptions here.
-//        Spark.post("/user", this::register); // new RegisterHandler() (implements Route)
+//        Spark.post("/user", this::register);
         Spark.post("/user", new RegisterHandler(userService));
 //        Spark.delete("/db", this::clear);
         Spark.delete("/db", new ClearHandler(userService));
@@ -44,10 +43,25 @@ public class Server {
         Spark.awaitStop();
     }
 
+//    private void setServices() {
+//        UserDAO userDAO = new MemoryUserDAO();
+//        AuthDAO authDAO = new MemoryAuthDAO(); // why lowercase??
+//        GameDAO gameDAO = new MemoryGameDAO();
+//        userService = new UserService(userDAO, authDAO, gameDAO);
+//        gameService = new GameService(userDAO, authDAO, gameDAO);
+//    }
+
     private void setServices() {
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDao();
-        GameDAO gameDAO = new MemoryGameDAO();
+        UserDAO userDAO = null;
+        AuthDAO authDAO = null;
+        GameDAO gameDAO = null;
+        try {
+            userDAO = new SQLUserDAO();
+            authDAO = new SQLAuthDAO();
+            gameDAO = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         userService = new UserService(userDAO, authDAO, gameDAO);
         gameService = new GameService(userDAO, authDAO, gameDAO);
     }

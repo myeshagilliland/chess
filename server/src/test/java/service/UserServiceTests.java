@@ -3,19 +3,33 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import requestresult.*;
-
 import java.util.Collection;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
+    @BeforeEach
+    void freshStart() {
+        try {
+            UserDAO userDao = new SQLUserDAO();
+            AuthDAO authDao = new SQLAuthDAO();
+            GameDAO gameDao = new SQLGameDAO();
+            userDao.clear();
+            authDao.clear();
+            gameDao.clear();
+        } catch (DataAccessException e) {
+            System.out.println("failed to clear database");
+        }
+    }
+
+
     @Test
     public void testRegisterPositive() {
         //given
-        RegisterRequest request = new RegisterRequest("name", "pwd", "me@mail");
+        RegisterRequest request = new RegisterRequest("name", "pwd", "email");
 
         //expected
         RegisterResult expected = new RegisterResult("name", "authToken");
@@ -23,27 +37,36 @@ public class UserServiceTests {
         //when
         RegisterResult answer;
         try {
-            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
+            UserService userService = null;
+            try {
+                userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
+            } catch (DataAccessException e) {}
+            assertNotNull(userService);
             answer = userService.register(request);
 
         //then
             assertEquals(expected.username(), answer.username());
             assertNotNull(answer.authToken());
         } catch (ServiceException e) {}
-
     }
 
     @Test
     public void testRegisterNegative() {
         //given
-        RegisterRequest req = new RegisterRequest("name", "pwd", "me@mail");
+        RegisterRequest req = new RegisterRequest("name", "pwd", "email");
 
         //expected
-        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
+        UserService userService = null;
+        try {
+            userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
+        } catch (DataAccessException e) { System.out.println("got here");}
+        assertNotNull(userService);
         try {
             userService.register(req);
         } catch (ServiceException e) {
-            System.out.println("Failed to register first request"); //this is executing, why?
+            System.out.println("Failed to register first request");
         }
         AlreadyTakenException expected = new AlreadyTakenException();
 
@@ -53,7 +76,7 @@ public class UserServiceTests {
         } catch (ServiceException e) {
 
         //then
-            assertEquals(e.getMessage(), expected.getMessage());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
 
     }
@@ -69,7 +92,12 @@ public class UserServiceTests {
         //when
         LoginResult answer;
         try {
-            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
+            UserService userService = null;
+            try {
+                userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
+            } catch (DataAccessException e) {}
+            assertNotNull(userService);
             answer = userService.login(request);
 
         //then
@@ -88,13 +116,18 @@ public class UserServiceTests {
         UnauthorizedException expected = new UnauthorizedException();
 
         //when
-        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
+        UserService userService = null;
+        try {
+            userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
+        } catch (DataAccessException e) {}
+        assertNotNull(userService);
         try {
             userService.login(req);
         } catch (ServiceException e) {
 
         //then
-            assertEquals(e.getMessage(), expected.getMessage());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
 
     }
@@ -108,8 +141,14 @@ public class UserServiceTests {
 
         //when
         try {
-            AuthDAO authDAO = new MemoryAuthDao();
-            UserService userService = new UserService(new MemoryUserDAO(), authDAO, new MemoryGameDAO());
+//            AuthDAO authDAO = new MemoryAuthDAO();
+            AuthDAO authDAO = new SQLAuthDAO();
+//            UserService userService = new UserService(new MemoryUserDAO(), authDAO, new MemoryGameDAO());
+            UserService userService = null;
+            try {
+                userService = new UserService(new SQLUserDAO(), authDAO, new SQLGameDAO());
+            } catch (DataAccessException e) {}
+            assertNotNull(userService);
             userService.logout(request);
 
         //then
@@ -127,23 +166,42 @@ public class UserServiceTests {
 
         //when
         try {
-            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDao(), new MemoryGameDAO());
+//            UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO());
+            UserService userService = null;
+            try {
+                userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
+            } catch (DataAccessException e) {}
+            assertNotNull(userService);
             userService.logout(request);
         } catch (ServiceException e) {
 
         //then
-            assertEquals(e.getMessage(), expected.getMessage());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
     @Test
     public void testClearPositive() {
         //given
-        UserDAO userDao = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDao();
-        GameDAO gameDAO = new MemoryGameDAO();
+//        UserDAO userDAO = new MemoryUserDAO();
+//        AuthDAO authDAO = new MemoryAuthDAO();
+//        GameDAO gameDAO = new MemoryGameDAO();
 
-        UserService userService = new UserService(userDao, authDAO, gameDAO);
+        UserDAO userDAO = null;
+        AuthDAO authDAO = null;
+        GameDAO gameDAO = null;
+        try {
+            userDAO = new SQLUserDAO();
+            authDAO = new SQLAuthDAO();
+            gameDAO = new SQLGameDAO();
+        } catch (DataAccessException e) {}
+
+//        UserService userService = new UserService(userDao, authDAO, gameDAO);
+        UserService userService = null;
+        try {
+            userService = new UserService(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO());
+        } catch (DataAccessException e) {}
+        assertNotNull(userService);
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         RegisterResult userInfo = null;
         try {
@@ -152,7 +210,7 @@ public class UserServiceTests {
 
         String authToken = userInfo.authToken();
         CreateGameRequest createGameRequest = new CreateGameRequest(authToken, "gameName1");
-        GameService gameService = new GameService(userDao, authDAO, gameDAO);
+        GameService gameService = new GameService(userDAO, authDAO, gameDAO);
         try {
             gameService.createGame(createGameRequest);
         } catch (ServiceException e) {}

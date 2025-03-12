@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.*;
 
 import java.util.Objects;
@@ -61,7 +62,8 @@ public class UserService {
         try {
             UserData user = userDAO.findUser(req.username());
 
-            if (user == null || !Objects.equals(req.password(), user.password())) {
+//            if (user == null || !Objects.equals(req.password(), user.password())) {
+            if (user == null || !BCrypt.checkpw(req.password(), user.password())) {
 //                throw new DataAccessException("Error: unauthorized");
                 throw new UnauthorizedException();
             }
