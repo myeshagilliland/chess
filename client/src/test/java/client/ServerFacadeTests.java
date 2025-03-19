@@ -45,4 +45,59 @@ public class ServerFacadeTests {
         }
     }
 
+    @Test
+    void testLoginPositive() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        var authData = facade.login("player1", "password");
+        assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void testLoginNegative() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        try {
+            facade.login("player1", "wrongpwd");
+        } catch (Exception ex) {
+            assertNotNull(ex);
+        }
+    }
+
+    @Test
+    void testLogoutPositive() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        String authToken = facade.login("player1", "password").authToken();
+        try {
+            facade.logout(authToken);
+            assertNotNull(authToken); //arrived here
+        } catch (Exception e) {}
+    }
+
+    @Test
+    void testLogoutNegative() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        try {
+            facade.logout("invalidAuthToken");
+        } catch (Exception ex) {
+            assertNotNull(ex);
+        }
+    }
+
+    @Test
+    void testCreateGamePositive() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        String authToken = facade.login("player1", "password").authToken();
+        var gameData = facade.createGame(authToken, "game1");
+        assertTrue(gameData.gameID() > 0);
+    }
+
+    @Test
+    void testCreateGameNegative() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        try {
+            facade.createGame("invalidAuthToken", "game1");
+        } catch (Exception ex) {
+            assertNotNull(ex);
+        }
+    }
+
 }

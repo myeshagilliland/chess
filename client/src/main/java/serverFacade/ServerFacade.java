@@ -3,6 +3,7 @@ package serverFacade;
 import com.google.gson.Gson;
 import exception.ServiceException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
 
 public class ServerFacade {
 
@@ -27,6 +29,24 @@ public class ServerFacade {
         return this.makeRequest("POST", path, user, AuthData.class);
     }
 
+    public AuthData login(String username, String password) throws ServiceException {
+        String path = "/session";
+        UserData user = new UserData(username, password, null);
+        return this.makeRequest("POST", path, user, AuthData.class);
+    }
+
+    public void logout(String authToken) throws ServiceException {
+        String path = "/session";
+        AuthData auth = new AuthData(authToken, null);
+        this.makeRequest("DELETE", path, auth, AuthData.class);
+    }
+
+    public GameData createGame(String authToken, String gameName) throws ServiceException {
+        String path = "/game";
+        AuthData auth = new AuthData(authToken, null);
+        GameData
+        this.makeRequest("POST", path, auth, AuthData.class);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ServiceException {
         try {
@@ -38,13 +58,11 @@ public class ServerFacade {
 
             writeBody(request, http);
             http.connect();
-//            throwIfNotSuccessful(http);
+            throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-        }
 //        } catch (ServiceException ex) {
 //            throw ex;
-//        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new ServiceException(ex.getMessage());
         }
     }
@@ -60,18 +78,18 @@ public class ServerFacade {
         }
     }
 
-//    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ServiceException {
-//        var status = http.getResponseCode();
-//        if (!isSuccessful(status)) {
-//            try (InputStream respErr = http.getErrorStream()) {
-//                if (respErr != null) {
-//                    throw ServiceException.fromJson(respErr);
-//                }
-//            }
-//
-//            throw new ServiceException("other failure: " + status);
-//        }
-//    }
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ServiceException {
+        var status = http.getResponseCode();
+        if (status != 200) {
+            try (InputStream respErr = http.getErrorStream()) {
+                if (respErr != null) {
+                    String errorMessage = new Gson().fromJson(new InputStreamReader(respErr), HashMap.class).get("message").toString();
+                    throw new ServiceException(errorMessage);
+                }
+            }
+            throw new ServiceException("Unexpected error: " + status);
+        }
+    }
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;
@@ -85,10 +103,5 @@ public class ServerFacade {
         }
         return response;
     }
-
-
-//    private boolean isSuccessful(int status) {
-//        return status / 100 == 2;
-//    }
 
 }
