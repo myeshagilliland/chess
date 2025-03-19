@@ -1,6 +1,9 @@
 package service;
 
 import dataaccess.*;
+import exception.AlreadyTakenException;
+import exception.ServiceException;
+import exception.UnauthorizedException;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
