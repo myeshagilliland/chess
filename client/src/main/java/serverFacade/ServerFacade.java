@@ -26,29 +26,28 @@ public class ServerFacade {
     public AuthData register(String username, String password, String email) throws ServiceException {
         String path = "/user";
         UserData user = new UserData(username, password, email);
-        return this.makeRequest("POST", path, user, AuthData.class);
+        return this.makeRequest("POST", path, null, user, AuthData.class);
     }
 
     public AuthData login(String username, String password) throws ServiceException {
         String path = "/session";
         UserData user = new UserData(username, password, null);
-        return this.makeRequest("POST", path, user, AuthData.class);
+        return this.makeRequest("POST", path, null, user, AuthData.class);
     }
 
     public void logout(String authToken) throws ServiceException {
         String path = "/session";
-        AuthData auth = new AuthData(authToken, null);
-        this.makeRequest("DELETE", path, auth, AuthData.class);
+        this.makeRequest("DELETE", path, authToken, null, null);
     }
 
     public GameData createGame(String authToken, String gameName) throws ServiceException {
         String path = "/game";
-        AuthData auth = new AuthData(authToken, null);
-        GameData
-        this.makeRequest("POST", path, auth, AuthData.class);
+        GameData gameData = new GameData(0, null, null, gameName, null);
+        return this.makeRequest("POST", path, authToken, gameData, GameData.class);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ServiceException {
+    private <T> T makeRequest(String method, String path, String auth, Object request, Class<T> responseClass)
+            throws ServiceException {
         try {
             String serverUrl = String.format("http://localhost:%d", port);
             URL url = (new URI(serverUrl + path)).toURL();
@@ -56,7 +55,7 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
+            writeBody(request, auth, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -68,7 +67,10 @@ public class ServerFacade {
     }
 
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+    private static void writeBody(Object request, String auth, HttpURLConnection http) throws IOException {
+        if (auth != null) {
+            http.addRequestProperty("Authorization", auth);
+        }
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
@@ -83,7 +85,8 @@ public class ServerFacade {
         if (status != 200) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    String errorMessage = new Gson().fromJson(new InputStreamReader(respErr), HashMap.class).get("message").toString();
+                    var errorMap = new Gson().fromJson(new InputStreamReader(respErr), HashMap.class);
+                    String errorMessage = errorMap.get("message").toString();
                     throw new ServiceException(errorMessage);
                 }
             }
