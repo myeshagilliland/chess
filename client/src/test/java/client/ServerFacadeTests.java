@@ -69,7 +69,9 @@ public class ServerFacadeTests {
         try {
             facade.logout(authToken);
             assertNotNull(authToken); //arrived here
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Test
@@ -95,6 +97,73 @@ public class ServerFacadeTests {
         facade.register("player1", "password", "p1@email.com");
         try {
             facade.createGame("invalidAuthToken", "game1");
+        } catch (Exception ex) {
+            assertNotNull(ex);
+        }
+    }
+
+    @Test
+    void testJoinGamePositive() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        String authToken = facade.login("player1", "password").authToken();
+        int gameID = facade.createGame(authToken, "game1").gameID();
+        try {
+            facade.joinGame(authToken, "WHITE", gameID);
+            assertNotNull(gameID); //arrived here
+        } catch (Exception e) {
+            throw e;
+        }
+
+    }
+
+    @Test
+    void testJoinGameNegative() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        String authToken = facade.login("player1", "password").authToken();
+        int gameID = facade.createGame(authToken, "game1").gameID();
+        facade.joinGame(authToken, "WHITE", gameID);
+        try {
+            facade.joinGame(authToken, "WHITE", gameID);
+        } catch (Exception e) {
+            assertNotNull(e);
+        }
+    }
+
+    @Test
+    void testListGamesPositive() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        String authToken = facade.login("player1", "password").authToken();
+        facade.createGame(authToken, "game1");
+//        facade.createGame(authToken, "game2");
+        var gamesList = facade.listGames(authToken);
+        assertTrue(gamesList.size() > 0);
+    }
+
+    @Test
+    void testListGamesNegative() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        String authToken = facade.login("player1", "password").authToken();
+        facade.createGame(authToken, "game1");
+        try {
+            facade.listGames("invalidAuthToken");
+        } catch (Exception e) {
+            assertNotNull(e);
+        }
+    }
+
+    @Test
+    void testClearPositive() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        facade.clear();
+        var authData = facade.register("player1", "password", "p1@email.com");
+        assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void testClearNegative() throws Exception {
+        facade.register("player1", "password", "p1@email.com");
+        try {
+            facade.register("player1", "password", "p1@email.com");
         } catch (Exception ex) {
             assertNotNull(ex);
         }
