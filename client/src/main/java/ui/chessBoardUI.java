@@ -9,8 +9,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
-
 import static chess.ChessPiece.PieceType.*;
 import static ui.EscapeSequences.*;
 
@@ -30,6 +28,7 @@ public class chessBoardUI {
 
     private static ChessBoard board = new ChessBoard();
     private static String playerColor;
+
     private static String[][] pieceSymbols = new String[8][8];
     private static final Map<ChessPiece.PieceType, String[]> piecesKey = Map.of(
             KING, new String[] {WHITE_KING, BLACK_KING},
@@ -39,6 +38,53 @@ public class chessBoardUI {
             ROOK, new String[] {WHITE_ROOK, BLACK_ROOK},
             PAWN, new String[] {WHITE_PAWN, BLACK_PAWN}
     );
+
+
+    public chessBoardUI(ChessGame game, String playerColor) {
+        this.board = game.getBoard();
+        this.playerColor = playerColor;
+
+        printBoard();
+    }
+
+    public static void printBoard() {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+        setPieceSymbols();
+
+        out.print(ERASE_SCREEN);
+
+        drawHeaders(out);
+
+        drawTicTacToeBoard(out);
+
+        drawHeaders(out);
+
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+
+//    public static void main(String[] args) {
+//        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+//
+//        playerColor = "WHITE";
+////        playerColor = "BLACK";
+//
+//        board.resetBoard();
+//        setPieceSymbols();
+//
+//        out.print(ERASE_SCREEN);
+//
+//        drawHeaders(out);
+//
+//        drawTicTacToeBoard(out);
+//
+//        drawHeaders(out);
+//
+//        out.print(SET_BG_COLOR_BLACK);
+//        out.print(SET_TEXT_COLOR_WHITE);
+//    }
 
     private static void setPieceSymbols() {
         for (int row = 0; row < 8; row++) {
@@ -64,28 +110,6 @@ public class chessBoardUI {
                 pieceSymbols[row][col] = pieceSymbol;
             }
         }
-    }
-
-
-    public static void main(String[] args) {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
-        playerColor = "WHITE";
-//        playerColor = "BLACK";
-
-        board.resetBoard();
-        setPieceSymbols();
-
-        out.print(ERASE_SCREEN);
-
-        drawHeaders(out);
-
-        drawTicTacToeBoard(out);
-
-        drawHeaders(out);
-
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void drawHeaders(PrintStream out) {
