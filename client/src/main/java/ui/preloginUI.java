@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessPiece;
+import exception.ServiceException;
 import model.AuthData;
 import serverFacade.ServerFacade;
 
@@ -27,9 +28,18 @@ public class preloginUI {
 //            PAWN, new String[] {WHITE_PAWN, BLACK_PAWN}
 //    );
 
-    public preloginUI(String[] args) {
+    ServerFacade serverFacade;
+
+    public preloginUI(int port) {
 //        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 //        System.out.print(SET_TEXT_COLOR_BLUE + help());
+        this.serverFacade = new ServerFacade(port);
+
+        try {
+            serverFacade.clear();
+        } catch (ServiceException e) {
+            System.out.println("Unable to clear database");
+        }
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -56,16 +66,20 @@ public class preloginUI {
         var cmd = tokens[0];
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
-        if (Objects.equals(cmd, "help")) {
-            return help();
-        } else if (Objects.equals(cmd, "register")) {
-            return register(params);
-        } else if (Objects.equals(cmd, "quit")) {
-            return "quit";
-        } else if (Objects.equals(cmd, "login")) {
-            return login(params);
-        } else {
-            return "not implemented";
+        try {
+            if (Objects.equals(cmd, "help")) {
+                return help();
+            } else if (Objects.equals(cmd, "register")) {
+                return register(params);
+            } else if (Objects.equals(cmd, "quit")) {
+                return "quit";
+            } else if (Objects.equals(cmd, "login")) {
+                return login(params);
+            } else {
+                return "not implemented";
+            }
+        } catch (ServiceException e) {
+            return "Unexpected error" + e.getErrorMessage();
         }
 //        printPrompt();
     }
@@ -85,13 +99,26 @@ public class preloginUI {
         return text;
     }
 
-    private String register(String[] params) {
-//        AuthData registrationData = ServerFacade.register(params[0], params[1], params[2]);
-        return "register not implemented";
+    private String register(String[] params) throws ServiceException {
+        if (params.length != 3) {
+            return "Please enter a username, password, and email to register.\n" +
+                    "Example: register username password email\n";
+        }
+//        return params[0] + params[1] + params[2];
+        AuthData registerData = serverFacade.register(params[0], params[1], params[2]);
+        new postloginUI(serverFacade, registerData.authToken());
+        return "";
+//        return registrationData.authToken();
     }
 
-    private String login(String[] params) {
-        return "login not implemented";
+    private String login(String[] params) throws ServiceException {
+        if (params.length != 2) {
+            return "Please enter a username and password to login.\n" +
+                    "Example: login username password\n";
+        }
+        AuthData loginData = serverFacade.login(params[0], params[1]);
+        new postloginUI(serverFacade, loginData.authToken());
+        return "";
     }
 
     private void printPrompt() {
