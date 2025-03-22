@@ -6,6 +6,7 @@ import model.AuthData;
 import model.GameData;
 import model.JoinRequest;
 import model.UserData;
+import requestresult.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,16 +27,18 @@ public class ServerFacade {
         this.port = port;
     }
 
-    public AuthData register(String username, String password, String email) throws ServiceException {
+    public RegisterResult register(String username, String password, String email) throws ServiceException {
         String path = "/user";
-        UserData user = new UserData(username, password, email);
-        return this.makeRequest("POST", path, null, user, AuthData.class);
+//        UserData user = new UserData(username, password, email);
+        RegisterRequest registerData = new RegisterRequest(username, password, email);
+        return this.makeRequest("POST", path, null, registerData, RegisterResult.class);
     }
 
-    public AuthData login(String username, String password) throws ServiceException {
+    public LoginResult login(String username, String password) throws ServiceException {
         String path = "/session";
-        UserData user = new UserData(username, password, null);
-        return this.makeRequest("POST", path, null, user, AuthData.class);
+//        UserData user = new UserData(username, password, null);
+        LoginRequest loginData = new LoginRequest(username, password);
+        return this.makeRequest("POST", path, null, loginData, LoginResult.class);
     }
 
     public void logout(String authToken) throws ServiceException {
@@ -43,25 +46,23 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, authToken, null, null);
     }
 
-    public GameData createGame(String authToken, String gameName) throws ServiceException {
+    public CreateGameResult createGame(String authToken, String gameName) throws ServiceException {
         String path = "/game";
-        GameData gameData = new GameData(0, null, null, gameName, null);
-        return this.makeRequest("POST", path, authToken, gameData, GameData.class);
+//        GameData gameData = new GameData(0, null, null, gameName, null);
+        CreateGameRequest createData = new CreateGameRequest(authToken, gameName);
+        return this.makeRequest("POST", path, authToken, createData, CreateGameResult.class);
     }
 
     public void joinGame(String authToken, String playerColor, int gameID) throws ServiceException {
         String path = "/game";
-        JoinRequest joinData = new JoinRequest(playerColor, gameID);
-        this.makeRequest("PUT", path, authToken, joinData, GameData.class);
+        JoinGameRequest joinData = new JoinGameRequest(authToken, playerColor, gameID);
+        this.makeRequest("PUT", path, authToken, joinData, null);
     }
 
-    public Collection<GameData> listGames(String authToken) throws ServiceException {
+    public ListGamesResult listGames(String authToken) throws ServiceException {
         String path = "/game";
-        var gamesList = this.makeRequest("GET", path, authToken, null, Collection.class);
-//        for (game:gamesList) {
-//
-//        }
-        System.out.println(gamesList.toString());
+        var gamesList = this.makeRequest("GET", path, authToken, null, ListGamesResult.class);
+//        System.out.println(gamesList.toString());
 //        return Arrays.asList(gamesList);
         return gamesList;
     }

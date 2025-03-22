@@ -3,6 +3,8 @@ package ui;
 import chess.ChessPiece;
 import exception.ServiceException;
 import model.AuthData;
+import requestresult.LoginResult;
+import requestresult.RegisterResult;
 import serverFacade.ServerFacade;
 
 import java.io.PrintStream;
@@ -105,7 +107,7 @@ public class preloginUI {
                     "Example: register username password email\n";
         }
 //        return params[0] + params[1] + params[2];
-        AuthData registerData = serverFacade.register(params[0], params[1], params[2]);
+        RegisterResult registerData = serverFacade.register(params[0], params[1], params[2]);
         new postloginUI(serverFacade, registerData.authToken());
         return "";
 //        return registrationData.authToken();
@@ -116,7 +118,7 @@ public class preloginUI {
             return "Please enter a username and password to login.\n" +
                     "Example: login username password\n";
         }
-        AuthData loginData = serverFacade.login(params[0], params[1]);
+        LoginResult loginData = serverFacade.login(params[0], params[1]);
         new postloginUI(serverFacade, loginData.authToken());
         return "";
     }
