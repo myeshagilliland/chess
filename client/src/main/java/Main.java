@@ -12,8 +12,8 @@ public class Main {
 //            port = Integer.parseInt(args[0]);
 //        }
         System.out.println("Welcome to Chess! Type 'help' to begin.");
-//        new chessBoardUI(new ChessGame(), "BLACK");
-
+        new chessBoardUI(new ChessGame(), "BLACK");
+//        new chessBoardUI(new ChessGame(), "WHITE");
         new preloginUI(port);
     }
 }

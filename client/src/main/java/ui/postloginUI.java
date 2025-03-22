@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import exception.ServiceException;
 import model.GameData;
 import requestresult.CreateGameResult;
@@ -112,11 +114,12 @@ public class postloginUI {
         }
         var gameID = gameNumbers.get(params[0]);
         if (gameID == null) {
-//            return gameNumbers.toString();
             return "Invalid game number. Please choose a game from this list: \n" + list();
         }
-        serverFacade.joinGame(authToken, params[1], gameID);
-        return "Successfully joined game " + params[0] + " as " + params[1] + "\n";
+        String playerColor = params[1];
+        serverFacade.joinGame(authToken, playerColor, gameID);
+        new chessBoardUI(new ChessGame(), playerColor);
+        return "\n";
     }
 
     private String gameListToString(ListGamesResult listData) {
