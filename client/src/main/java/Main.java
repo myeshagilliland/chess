@@ -8,11 +8,11 @@ public class Main {
 //        System.out.println("♕ 240 Chess Client: " + piece);
 
         int port = 8080;
-//        if (args.length == 1) {
-//            port = Integer.parseInt(args[0]);
-//        }
+        if (args.length == 1) {
+            port = Integer.parseInt(args[0]);
+        }
         System.out.println("Welcome to Chess! Type 'help' to begin.");
-        new chessBoardUI(new ChessGame(), "BLACK");
+//        new chessBoardUI(new ChessGame(), "BLACK");
 //        new chessBoardUI(new ChessGame(), "WHITE");
         new preloginUI(port);
     }

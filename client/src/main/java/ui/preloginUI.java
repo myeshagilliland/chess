@@ -21,20 +21,9 @@ import static ui.EscapeSequences.BLACK_PAWN;
 
 public class preloginUI {
 
-//    private static final Map<ChessPiece.PieceType, String[]> piecesKey = Map.of(
-//            KING, new String[] {WHITE_KING, BLACK_KING},
-//            QUEEN, new String[] {WHITE_QUEEN, BLACK_QUEEN},
-//            BISHOP, new String[] {WHITE_BISHOP, BLACK_BISHOP},
-//            KNIGHT, new String[] {WHITE_KNIGHT, BLACK_KNIGHT},
-//            ROOK, new String[] {WHITE_ROOK, BLACK_ROOK},
-//            PAWN, new String[] {WHITE_PAWN, BLACK_PAWN}
-//    );
-
     ServerFacade serverFacade;
 
     public preloginUI(int port) {
-//        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-//        System.out.print(SET_TEXT_COLOR_BLUE + help());
         this.serverFacade = new ServerFacade(port);
 
         try {
@@ -58,47 +47,35 @@ public class preloginUI {
             }
         }
         System.out.println();
-
-//        executeCommand(out, args);
     }
 
     private String executeCommand(String input) {
         var tokens = input.toLowerCase().split(" ");
-//        var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var cmd = tokens[0];
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
         try {
             if (Objects.equals(cmd, "help")) {
                 return help();
-            } else if (Objects.equals(cmd, "register")) {
-                return register(params);
             } else if (Objects.equals(cmd, "quit")) {
                 return "quit";
             } else if (Objects.equals(cmd, "login")) {
                 return login(params);
+            } else if (Objects.equals(cmd, "register")) {
+                return register(params);
             } else {
-                return "not implemented";
+                return "Invalid command. Try one of these: \n" + help();
             }
         } catch (ServiceException e) {
             return "Unexpected error" + e.getErrorMessage();
         }
-//        printPrompt();
     }
 
     private String help() {
-//        out.print(SET_TEXT_COLOR_BLUE);
-//        out.print("register <USERNAME> <PASSWORD> <EMAIL> : to create an account\n" +
-//                "login <USERNAME> <PASSWORD> : to login to play chess\n" +
-//                "quit : exit the game\n" +
-//                "help : to view this menu");
-        String text =
-                "register <USERNAME> <PASSWORD> <EMAIL> : to create an account\n" +
+        return "register <USERNAME> <PASSWORD> <EMAIL> : to create an account\n" +
                 "login <USERNAME> <PASSWORD> : to login to your account\n" +
                 "quit : to exit chess\n" +
                 "help : to view this menu\n";
-
-        return text;
     }
 
     private String register(String[] params) throws ServiceException {
@@ -106,11 +83,9 @@ public class preloginUI {
             return "Please enter a username, password, and email to register.\n" +
                     "Example: register username password email\n";
         }
-//        return params[0] + params[1] + params[2];
         RegisterResult registerData = serverFacade.register(params[0], params[1], params[2]);
         new postloginUI(serverFacade, registerData.authToken());
         return "";
-//        return registrationData.authToken();
     }
 
     private String login(String[] params) throws ServiceException {

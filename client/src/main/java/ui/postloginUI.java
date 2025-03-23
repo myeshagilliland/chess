@@ -20,17 +20,18 @@ public class postloginUI {
 
     private ServerFacade serverFacade;
     private String authToken;
-    private HashMap<String, Integer> gameNumbers;
+    private HashMap<String, GameData> gameNumbers = new HashMap<>();
 
     public postloginUI(ServerFacade serverFacade, String authToken) {
         this.serverFacade = serverFacade;
         this.authToken = authToken;
 
 //        printPrompt();
+        System.out.print(SET_TEXT_COLOR_BLUE + "Successfully logged in. Type 'help' to view the menu\n");
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("logout")) {
+        while (!result.equals("Logged out. Type 'help' to view the menu")) {
             printPrompt();
             String line = scanner.nextLine();
 
@@ -68,10 +69,10 @@ public class postloginUI {
                 return join(params);
 //                return "help not implemented";
             } else if (Objects.equals(cmd, "observe")) {
-//                return observeGame(params);
-                return "help not implemented";
+                return observe(params);
+//                return "help not implemented";
             }else {
-                return "not implemented";
+                return "Invalid command. Try one of these: \n" + help();
             }
         } catch (ServiceException e) {
             return "Unexpected error" + e.getErrorMessage();
@@ -84,13 +85,14 @@ public class postloginUI {
                 "list - to list all games\n" +
                 "join <ID> [WHITE|BLACK] - to join a game\n" +
                 "observe <ID> - to observe a game\n" +
-                "quit - to quit this program\n" +
+                "logout - to logout\n" +
+//                "quit - to quit this program\n" +
                 "help - to display this menu\n";
     }
 
     private String logout() throws ServiceException {
         serverFacade.logout(authToken);
-        return "logout";
+        return "Logged out. Type 'help' to view the menu";
     }
 
     private String create(String[] params) throws ServiceException {
@@ -108,23 +110,48 @@ public class postloginUI {
     }
 
     private String join(String[] params) throws ServiceException {
-        if (params.length != 2 || !(params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))) {
+        list();
+        if (params.length != 2 || !params[0].matches("\\d+") || !(params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))) {
             return "Please enter a game number and choice of player color to join a game\n" +
                     "Example: join 1 WHITE\n";
         }
-        var gameID = gameNumbers.get(params[0]);
-        if (gameID == null) {
+        if (gameNumbers.size() < Integer.parseInt(params[0])) {
             return "Invalid game number. Please choose a game from this list: \n" + list();
         }
+        var game = gameNumbers.get(params[0]);
         String playerColor = params[1];
-        serverFacade.joinGame(authToken, playerColor, gameID);
-        new chessBoardUI(new ChessGame(), playerColor);
-        return "\n";
+        try {
+            serverFacade.joinGame(authToken, playerColor, game.gameID());
+        } catch (ServiceException e) {
+            if (Objects.equals(e.getErrorMessage(), "{\"message\": \"Error: Error: already taken\"}")) {
+                return "Player color already taken. Please try again.\n" + list();
+            }
+        }
+        new chessBoardUI(game.chessGame(), playerColor);
+        return "";
+    }
+
+    private String observe(String[] params) throws ServiceException {
+        if (params.length != 1 || !params[0].matches("\\d+")) {
+            return "Please enter a game number to observer a game\n" +
+                    "Example: observe 1\n";
+        }
+
+        if (gameNumbers.size() < Integer.parseInt(params[0])) {
+            return "Invalid game number. Please choose a game from this list: \n" + list();
+        }
+        var game = gameNumbers.get(params[0]);
+//        if (game == null) {
+//        }
+//        String playerColor = params[1];
+//        serverFacade.joinGame(authToken, playerColor, game.gameID());
+        new chessBoardUI(game.chessGame(), "white");
+        return "";
     }
 
     private String gameListToString(ListGamesResult listData) {
         //"1 - MyGame, White Player: username, Black Player: AVAILABLE"
-        gameNumbers = new HashMap<String, Integer>();
+        gameNumbers = new HashMap<String, GameData>();
         String str = "";
         for (int i = 0; i < listData.games().size(); i++) {
             GameData game = listData.games().get(i);
@@ -138,7 +165,7 @@ public class postloginUI {
                 str += ("Black Player: AVAILABLE\n");
             } else { str += ("Black Player: " + game.blackUsername() + "\n"); }
 
-            gameNumbers.put(Integer.toString(i+1), game.gameID());
+            gameNumbers.put(Integer.toString(i+1), game);
         }
         return str;
     }
