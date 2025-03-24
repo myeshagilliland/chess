@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import exception.ServiceException;
 import requestresult.LogoutRequest;
 import requestresult.LogoutResult;
 import service.*;

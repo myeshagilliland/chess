@@ -3,7 +3,7 @@ package handler;
 import requestresult.RegisterRequest;
 import com.google.gson.Gson;
 import requestresult.RegisterResult;
-import service.ServiceException;
+import exception.ServiceException;
 import service.UserService;
 import spark.*;
 

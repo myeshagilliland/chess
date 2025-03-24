@@ -5,6 +5,10 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import exception.AlreadyTakenException;
+import exception.BadRequestException;
+import exception.ServiceException;
+import exception.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import requestresult.*;
@@ -51,8 +55,8 @@ public class GameService {
 
         try {
 
-            if (req.authToken() == null || (!Objects.equals(req.playerColor(), "WHITE")
-                    && !Objects.equals(req.playerColor(), "BLACK"))  || req.gameID() == 0) {
+            if (req.authToken() == null || req.playerColor() == null || (!(req.playerColor().equalsIgnoreCase("white"))
+                    && !(req.playerColor().equalsIgnoreCase("black")))  || req.gameID() == 0) {
                 throw new BadRequestException();
             }
 
@@ -63,14 +67,14 @@ public class GameService {
 
             GameData gameData = gameDAO.findGame(req.gameID());
 
-            boolean whiteTaken = (Objects.equals(req.playerColor(), "WHITE") & gameData.whiteUsername() != null);
-            boolean blackTaken = (Objects.equals(req.playerColor(), "BLACK") & gameData.blackUsername() != null);
+            boolean whiteTaken = ((req.playerColor().equalsIgnoreCase("white")) & gameData.whiteUsername() != null);
+            boolean blackTaken = ((req.playerColor().equalsIgnoreCase("black")) & gameData.blackUsername() != null);
             if (whiteTaken || blackTaken) {
                 throw new AlreadyTakenException();
             }
 
             GameData updatedGameData;
-            if (Objects.equals(req.playerColor(), "WHITE")) {
+            if ((req.playerColor().equalsIgnoreCase("white"))) {
                 updatedGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(),
                         gameData.gameName(), gameData.chessGame());
             } else {
