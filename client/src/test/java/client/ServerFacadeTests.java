@@ -39,6 +39,7 @@ public class ServerFacadeTests {
         facade.register("player1", "password", "p1@email.com");
         try {
             facade.register("player1", "password", "p1@email.com");
+            fail();
         } catch (Exception ex) {
             assertNotNull(ex);
         }
@@ -56,6 +57,7 @@ public class ServerFacadeTests {
         facade.register("player1", "password", "p1@email.com");
         try {
             facade.login("player1", "wrongpwd");
+            fail();
         } catch (Exception ex) {
             assertNotNull(ex);
         }
@@ -94,6 +96,7 @@ public class ServerFacadeTests {
         facade.register("player1", "password", "p1@email.com");
         try {
             facade.createGame("invalidAuthToken", "game1");
+            fail();
         } catch (Exception ex) {
             assertNotNull(ex);
         }
@@ -121,6 +124,7 @@ public class ServerFacadeTests {
         facade.joinGame(authToken, "WHITE", gameID);
         try {
             facade.joinGame(authToken, "WHITE", gameID);
+            fail();
         } catch (Exception e) {
             assertNotNull(e);
         }
@@ -143,6 +147,7 @@ public class ServerFacadeTests {
         facade.createGame(authToken, "game1");
         try {
             facade.listGames("invalidAuthToken");
+            fail();
         } catch (Exception e) {
             assertNotNull(e);
         }
@@ -161,6 +166,7 @@ public class ServerFacadeTests {
         facade.register("player1", "password", "p1@email.com");
         try {
             facade.register("player1", "password", "p1@email.com");
+            fail();
         } catch (Exception ex) {
             assertNotNull(ex);
         }

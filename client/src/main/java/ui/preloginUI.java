@@ -93,7 +93,14 @@ public class preloginUI {
             return "Please enter a username and password to login.\n" +
                     "Example: login username password\n";
         }
-        LoginResult loginData = serverFacade.login(params[0], params[1]);
+        LoginResult loginData = null;
+        try {
+            loginData = serverFacade.login(params[0], params[1]);
+        } catch (ServiceException e) {
+            if (Objects.equals(e.getErrorMessage(), "{\"message\": \"Error: Error: unauthorized\"}")) {
+                return "User not registered. Please try again.\n";
+            }
+        }
         new postloginUI(serverFacade, loginData.authToken());
         return "";
     }
