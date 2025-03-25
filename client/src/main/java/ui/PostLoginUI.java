@@ -37,6 +37,7 @@ public class PostLoginUI {
                 case "list" -> list();
                 case "join" -> join(params);
                 case "observe" -> observe(params);
+                case "quit" -> "quit";
                 case null, default -> "Invalid command. Try one of these: \n" + help();
             };
         } catch (ServiceException e) {
@@ -50,6 +51,7 @@ public class PostLoginUI {
                 "join <ID> [WHITE|BLACK] - to join a game\n" +
                 "observe <ID> - to observe a game\n" +
                 "logout - to logout\n" +
+                "quit : to exit chess\n" +
                 "help - to display this menu\n";
     }
 

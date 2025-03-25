@@ -41,7 +41,12 @@ public class Repl {
                     result = "Logged out. Type 'help' to view the menu\n";
                 }
 
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                if (Objects.equals(result, "quit")) {
+                    System.out.print(SET_TEXT_COLOR_BLUE + "Thank you for playing Chess! Goodbye");
+                } else {
+                    System.out.print(SET_TEXT_COLOR_BLUE + result);
+                }
+
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -52,7 +57,7 @@ public class Repl {
 
     private void printPrompt(String ui) {
         String message;
-        if (ui == "preLogin") {
+        if (Objects.equals(ui, "preLogin")) {
             message = "[LOGGED OUT] >>> ";
         } else {
             message = "[LOGGED IN] >>> ";
