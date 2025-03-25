@@ -1,6 +1,4 @@
-import chess.*;
-import ui.chessBoardUI;
-import ui.preloginUI;
+import ui.PreLoginUI;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,9 +9,11 @@ public class Main {
         if (args.length == 1) {
             port = Integer.parseInt(args[0]);
         }
-        System.out.println("Welcome to Chess! Type 'help' to begin.");
-//        new chessBoardUI(new ChessGame(), "BLACK");
-//        new chessBoardUI(new ChessGame(), "WHITE");
-        new preloginUI(port);
+//        System.out.println("Welcome to Chess! Type 'help' to begin.");
+//        new ChessBoardUI(new ChessGame(), "BLACK");
+//        new ChessBoardUI(new ChessGame(), "WHITE");
+
+//        new PreLoginUI(port);
+        new Repl(port).run();
     }
 }

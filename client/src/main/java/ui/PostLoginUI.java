@@ -1,83 +1,47 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
 import exception.ServiceException;
 import model.GameData;
 import requestresult.CreateGameResult;
-import requestresult.JoinGameResult;
 import requestresult.ListGamesResult;
-import serverFacade.ServerFacade;
+import facade.ServerFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Scanner;
-
 import static ui.EscapeSequences.*;
 
-public class postloginUI {
+public class PostLoginUI {
 
     private ServerFacade serverFacade;
     private String authToken;
     private HashMap<String, GameData> gameNumbers = new HashMap<>();
 
-    public postloginUI(ServerFacade serverFacade, String authToken) {
+    public PostLoginUI(ServerFacade serverFacade, String authToken) {
         this.serverFacade = serverFacade;
         this.authToken = authToken;
 
-//        printPrompt();
         System.out.print(SET_TEXT_COLOR_BLUE + "Successfully logged in. Type 'help' to view the menu\n");
-
-        Scanner scanner = new Scanner(System.in);
-        var result = "";
-        while (!result.equals("Logged out. Type 'help' to view the menu")) {
-            printPrompt();
-            String line = scanner.nextLine();
-
-            try {
-                result = executeCommand(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
-            }
-        }
-        System.out.println();
     }
 
-    private String executeCommand(String input) {
+    public String executeCommand(String input) {
         var tokens = input.toLowerCase().split(" ");
-//        var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var cmd = tokens[0];
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
         try {
-            if (Objects.equals(cmd, "help")) {
-                return help();
-//                return "help not implemented";
-            } else if (Objects.equals(cmd, "logout")) {
-                return logout();
-//                return "logout";
-            } else if (Objects.equals(cmd, "create")) {
-                return create(params);
-//                return "create_game not implemented";
-            } else if (Objects.equals(cmd, "list")) {
-                return list();
-//                return "help not implemented";
-            } else if (Objects.equals(cmd, "join")) {
-                return join(params);
-//                return "help not implemented";
-            } else if (Objects.equals(cmd, "observe")) {
-                return observe(params);
-//                return "help not implemented";
-            }else {
-                return "Invalid command. Try one of these: \n" + help();
-            }
+            return switch (cmd) {
+                case "help" -> help();
+                case "logout" -> logout();
+                case "create" -> create(params);
+                case "list" -> list();
+                case "join" -> join(params);
+                case "observe" -> observe(params);
+                case null, default -> "Invalid command. Try one of these: \n" + help();
+            };
         } catch (ServiceException e) {
             return "Unexpected error" + e.getErrorMessage();
         }
-//        printPrompt();
     }
 
     private String help() {
@@ -86,13 +50,12 @@ public class postloginUI {
                 "join <ID> [WHITE|BLACK] - to join a game\n" +
                 "observe <ID> - to observe a game\n" +
                 "logout - to logout\n" +
-//                "quit - to quit this program\n" +
                 "help - to display this menu\n";
     }
 
     private String logout() throws ServiceException {
         serverFacade.logout(authToken);
-        return "Logged out. Type 'help' to view the menu";
+        return "Logged out";
     }
 
     private String create(String[] params) throws ServiceException {
@@ -127,7 +90,7 @@ public class postloginUI {
                 return "Player color already taken. Please try again.\n" + list();
             }
         }
-        new chessBoardUI(game.chessGame(), playerColor);
+        new ChessBoardUI(game.chessGame(), playerColor);
         return "";
     }
 
@@ -141,11 +104,7 @@ public class postloginUI {
             return "Invalid game number. Please choose a game from this list: \n" + list();
         }
         var game = gameNumbers.get(params[0]);
-//        if (game == null) {
-//        }
-//        String playerColor = params[1];
-//        serverFacade.joinGame(authToken, playerColor, game.gameID());
-        new chessBoardUI(game.chessGame(), "white");
+        new ChessBoardUI(game.chessGame(), "white");
         return "";
     }
 
