@@ -12,15 +12,15 @@ import java.util.Objects;
 import static chess.ChessPiece.PieceType.*;
 import static ui.EscapeSequences.*;
 
-public class chessBoardUI {
+public class ChessBoardUI {
 
     private static ChessBoard board = new ChessBoard();
     private static String playerColor;
 
-    private static final int num_squares = 8;
+    private static final int NUM_SQUARES = 8;
 
     private static String[][] pieceSymbols = new String[8][8];
-    private static final Map<ChessPiece.PieceType, String[]> piecesKey = Map.of(
+    private static final Map<ChessPiece.PieceType, String[]> PIECES_KEY = Map.of(
             KING, new String[] {WHITE_KING, BLACK_KING},
             QUEEN, new String[] {WHITE_QUEEN, BLACK_QUEEN},
             BISHOP, new String[] {WHITE_BISHOP, BLACK_BISHOP},
@@ -30,7 +30,7 @@ public class chessBoardUI {
     );
 
 
-    public chessBoardUI(ChessGame game, String playerColor) {
+    public ChessBoardUI(ChessGame game, String playerColor) {
         this.board = game.getBoard();
         this.playerColor = playerColor;
 
@@ -71,9 +71,9 @@ public class chessBoardUI {
                 if (piece == null) {
                     pieceSymbol = EMPTY;
                 } else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                    pieceSymbol = piecesKey.get(piece.getPieceType())[0];
+                    pieceSymbol = PIECES_KEY.get(piece.getPieceType())[0];
                 } else {
-                    pieceSymbol = piecesKey.get(piece.getPieceType())[1];
+                    pieceSymbol = PIECES_KEY.get(piece.getPieceType())[1];
                 }
                 pieceSymbols[row][col] = pieceSymbol;
             }
@@ -83,7 +83,7 @@ public class chessBoardUI {
     private static void drawHeaders(PrintStream out) {
 
         String[] headers = { EMPTY, " a ", " b ", " c ", " d ", " e ", " f " , " g ", " h ", EMPTY};
-        for (int boardCol = 0; boardCol < num_squares + 2; ++boardCol) {
+        for (int boardCol = 0; boardCol < NUM_SQUARES + 2; ++boardCol) {
 
             if (playerColor.equalsIgnoreCase("white")) {
                 drawHeader(out, headers[boardCol]);
@@ -113,7 +113,7 @@ public class chessBoardUI {
         String[] rowNumbers = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
         String firstSquareColor = SET_BG_COLOR_WHITE;
 
-        for (int boardRow = 0; boardRow < num_squares; ++boardRow) {
+        for (int boardRow = 0; boardRow < NUM_SQUARES; ++boardRow) {
 
             if (playerColor.equalsIgnoreCase("white")) {
                 drawRowOfSquares(out, rowNumbers[8-(boardRow+1)], firstSquareColor, pieceSymbols[boardRow]);
@@ -131,7 +131,7 @@ public class chessBoardUI {
 
         String squareColor = startColor;
 
-        for (int boardCol = 0; boardCol < num_squares; ++boardCol) {
+        for (int boardCol = 0; boardCol < NUM_SQUARES; ++boardCol) {
 
             out.print(squareColor);
             out.print(pieceSymbols[boardCol]);
@@ -142,11 +142,6 @@ public class chessBoardUI {
         drawHeader(out, rowNumber);
 
         out.println();
-    }
-
-    private static void printPlayer(PrintStream out, String player, String squareColor) {
-        out.print(squareColor);
-        out.print(player);
     }
 
     private static String switchColor(String color) {

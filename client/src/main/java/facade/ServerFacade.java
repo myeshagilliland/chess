@@ -1,11 +1,7 @@
-package serverFacade;
+package facade;
 
 import com.google.gson.Gson;
 import exception.ServiceException;
-import model.AuthData;
-import model.GameData;
-import model.JoinRequest;
-import model.UserData;
 import requestresult.*;
 
 import java.io.IOException;
@@ -15,8 +11,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class ServerFacade {
@@ -29,14 +23,12 @@ public class ServerFacade {
 
     public RegisterResult register(String username, String password, String email) throws ServiceException {
         String path = "/user";
-//        UserData user = new UserData(username, password, email);
         RegisterRequest registerData = new RegisterRequest(username, password, email);
         return this.makeRequest("POST", path, null, registerData, RegisterResult.class);
     }
 
     public LoginResult login(String username, String password) throws ServiceException {
         String path = "/session";
-//        UserData user = new UserData(username, password, null);
         LoginRequest loginData = new LoginRequest(username, password);
         return this.makeRequest("POST", path, null, loginData, LoginResult.class);
     }
@@ -48,7 +40,6 @@ public class ServerFacade {
 
     public CreateGameResult createGame(String authToken, String gameName) throws ServiceException {
         String path = "/game";
-//        GameData gameData = new GameData(0, null, null, gameName, null);
         CreateGameRequest createData = new CreateGameRequest(authToken, gameName);
         return this.makeRequest("POST", path, authToken, createData, CreateGameResult.class);
     }
@@ -62,8 +53,6 @@ public class ServerFacade {
     public ListGamesResult listGames(String authToken) throws ServiceException {
         String path = "/game";
         var gamesList = this.makeRequest("GET", path, authToken, null, ListGamesResult.class);
-//        System.out.println(gamesList.toString());
-//        return Arrays.asList(gamesList);
         return gamesList;
     }
 
@@ -85,8 +74,6 @@ public class ServerFacade {
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-//        } catch (ServiceException ex) {
-//            throw ex;
         } catch (Exception ex) {
             throw new ServiceException(ex.getMessage());
         }
@@ -132,9 +119,5 @@ public class ServerFacade {
         }
         return response;
     }
-
-//    private static <T> T deserialize(InputStreamReader reader, Class<T> responseClass) {
-//        if (responseClass)
-//    }
 
 }

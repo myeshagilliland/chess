@@ -1,29 +1,20 @@
 package ui;
 
-import chess.ChessPiece;
 import exception.ServiceException;
-import model.AuthData;
 import requestresult.LoginResult;
 import requestresult.RegisterResult;
-import serverFacade.ServerFacade;
+import facade.ServerFacade;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Scanner;
-
-import static chess.ChessPiece.PieceType.*;
-import static chess.ChessPiece.PieceType.PAWN;
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.BLACK_PAWN;
 
-public class preloginUI {
+public class PreLoginUI {
 
     ServerFacade serverFacade;
+    PostLoginUI postLoginUI;
 
-    public preloginUI(int port) {
+    public PreLoginUI(int port) {
         this.serverFacade = new ServerFacade(port);
 
         try {
@@ -31,44 +22,28 @@ public class preloginUI {
         } catch (ServiceException e) {
             System.out.println("Unable to clear database");
         }
-
-        Scanner scanner = new Scanner(System.in);
-        var result = "";
-        while (!result.equals("quit")) {
-            printPrompt();
-            String line = scanner.nextLine();
-
-            try {
-                result = executeCommand(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
-            }
-        }
-        System.out.println();
     }
 
-    private String executeCommand(String input) {
+    public String executeCommand(String input) {
         var tokens = input.toLowerCase().split(" ");
         var cmd = tokens[0];
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
         try {
-            if (Objects.equals(cmd, "help")) {
-                return help();
-            } else if (Objects.equals(cmd, "quit")) {
-                return "quit";
-            } else if (Objects.equals(cmd, "login")) {
-                return login(params);
-            } else if (Objects.equals(cmd, "register")) {
-                return register(params);
-            } else {
-                return "Invalid command. Try one of these: \n" + help();
-            }
+            return switch (cmd) {
+                case "help" -> help();
+                case "quit" -> "quit";
+                case "login" -> login(params);
+                case "register" -> register(params);
+                case null, default -> "Invalid command. Try one of these: \n" + help();
+            };
         } catch (ServiceException e) {
             return "Unexpected error" + e.getErrorMessage();
         }
+    }
+
+    public PostLoginUI getPostLoginUI() {
+        return postLoginUI;
     }
 
     private String help() {
@@ -84,8 +59,8 @@ public class preloginUI {
                     "Example: register username password email\n";
         }
         RegisterResult registerData = serverFacade.register(params[0], params[1], params[2]);
-        new postloginUI(serverFacade, registerData.authToken());
-        return "";
+        postLoginUI = new PostLoginUI(serverFacade, registerData.authToken());
+        return "Logged in";
     }
 
     private String login(String[] params) throws ServiceException {
@@ -101,8 +76,8 @@ public class preloginUI {
                 return "User not registered. Please try again.\n";
             }
         }
-        new postloginUI(serverFacade, loginData.authToken());
-        return "";
+        postLoginUI = new PostLoginUI(serverFacade, loginData.authToken());
+        return "Logged in";
     }
 
     private void printPrompt() {

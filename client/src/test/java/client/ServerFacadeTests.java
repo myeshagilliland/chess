@@ -2,7 +2,7 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
-import serverFacade.ServerFacade;
+import facade.ServerFacade;
 import static dataaccess.DatabaseManager.freshStart;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -163,9 +163,9 @@ public class ServerFacadeTests {
 
     @Test
     void testClearNegative() throws Exception {
-        facade.register("player1", "password", "p1@email.com");
+        facade.register("player2", "pwd", "p2@email.com");
         try {
-            facade.register("player1", "password", "p1@email.com");
+            facade.register("player2", "pwd", "p2@email.com");
             fail();
         } catch (Exception ex) {
             assertNotNull(ex);
