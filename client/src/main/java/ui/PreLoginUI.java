@@ -58,7 +58,14 @@ public class PreLoginUI {
             return "Please enter a username, password, and email to register.\n" +
                     "Example: register username password email\n";
         }
-        RegisterResult registerData = serverFacade.register(params[0], params[1], params[2]);
+        RegisterResult registerData = null;
+        try {
+            registerData = serverFacade.register(params[0], params[1], params[2]);
+        } catch (ServiceException e) {
+            if (Objects.equals(e.getErrorMessage(), "{\"message\": \"Error: Error: already taken\"}")) {
+                return "Username already taken. Please try again\n";
+            }
+        }
         postLoginUI = new PostLoginUI(serverFacade, registerData.authToken());
         return "Logged in";
     }

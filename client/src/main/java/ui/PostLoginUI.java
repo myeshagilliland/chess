@@ -46,13 +46,13 @@ public class PostLoginUI {
     }
 
     private String help() {
-        return "create <NAME> - to create a new game\n" +
-                "list - to list all games\n" +
-                "join <ID> [WHITE|BLACK] - to join a game\n" +
-                "observe <ID> - to observe a game\n" +
-                "logout - to logout\n" +
+        return "create <NAME> : to create a new game\n" +
+                "list : to list all games\n" +
+                "join <ID> [WHITE|BLACK] : to join a game\n" +
+                "observe <ID> : to observe a game\n" +
+                "logout : to logout\n" +
                 "quit : to exit chess\n" +
-                "help - to display this menu\n";
+                "help : to display this menu\n";
     }
 
     private String logout() throws ServiceException {
