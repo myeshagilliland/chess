@@ -41,7 +41,7 @@ public class PostLoginUI {
                 case null, default -> "Invalid command. Try one of these: \n" + help();
             };
         } catch (ServiceException e) {
-            return "Unexpected error" + e.getErrorMessage();
+            return "Unexpected error" + e.getErrorMessage() + "\n";
         }
     }
 
