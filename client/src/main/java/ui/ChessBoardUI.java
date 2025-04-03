@@ -34,7 +34,7 @@ public class ChessBoardUI {
         this.board = game.getBoard();
         this.playerColor = playerColor;
 
-        printBoard();
+//        printBoard();
     }
 
     public static void printBoard() {
