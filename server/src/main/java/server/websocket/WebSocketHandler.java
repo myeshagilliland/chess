@@ -1,44 +1,108 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
+import model.AuthData;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import service.GameService;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import static websocket.messages.ServerMessage.ServerMessageType.*;
+
+@WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
+//    private final UserService
+//    private final GameService gameService;
+    private final AuthDAO authDAO;
+    private final GameDAO gameDAO;
+
+    public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        Action action = new Gson().fromJson(message, Action.class);
-        switch (action.type()) {
-            case ENTER -> enter(action.visitorName(), session);
-            case EXIT -> exit(action.visitorName());
+        UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+        switch (command.getCommandType()) {
+            case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
+//            case MAKE_MOVE -> makeMove(action.visitorName());
+//            case LEAVE -> leave(action.visitorName());
+//            case RESIGN -> resign(action.visitorName());
         }
     }
 
-    private void enter(String visitorName, Session session) throws IOException {
-        connections.add(visitorName, session);
-        var message = String.format("%s is in the shop", visitorName);
-        var notification = new Notification(Notification.Type.ARRIVAL, message);
-        connections.broadcast(visitorName, notification);
-    }
+    private void connect(String authToken, int gameID, Session session) throws IOException {
 
-    private void exit(String visitorName) throws IOException {
-        connections.remove(visitorName);
-        var message = String.format("%s left the shop", visitorName);
-        var notification = new Notification(Notification.Type.DEPARTURE, message);
-        connections.broadcast(visitorName, notification);
-    }
-
-    public void makeNoise(String petName, String sound) throws ResponseException {
+        AuthData authData = null;
         try {
-            var message = String.format("%s says %s", petName, sound);
-            var notification = new Notification(Notification.Type.NOISE, message);
-            connections.broadcast("", notification);
-        } catch (Exception ex) {
-            throw new ResponseException(500, ex.getMessage());
+            authData = authDAO.findAuth(authToken);
+        } catch (DataAccessException e) {
+            connections.sendError(session, new ErrorMessage(ERROR, e.getMessage()));
         }
+        if (authData == null) {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Not logged in. Please try again");
+            connections.sendError(session, errorMessage);
+            return;
+        }
+
+        GameData gameData = null;
+        try {
+            gameData = gameDAO.findGame(gameID);
+        } catch (DataAccessException e) {
+            connections.sendError(session, new ErrorMessage(ERROR, e.getMessage()));
+        }
+        if (gameData == null) {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Game not found. Please try again");
+            connections.sendError(session, errorMessage);
+            return;
+        }
+
+        connections.add(gameID, authData.username(), session);
+
+        String role = "observer";
+        if (Objects.equals(authData.username(), gameData.whiteUsername())) {
+            role = "white";
+        } else if (Objects.equals(authData.username(), gameData.blackUsername())) {
+            role = "black";
+        }
+
+        var message = String.format("%s joined as %s", authData.username(), role);
+        var notification = new NotificationMessage(NOTIFICATION, message);
+        var loadGame = new LoadGameMessage(LOAD_GAME, gameData.chessGame());
+
+        connections.sendLoadGameRoot(session, loadGame);
+        connections.sendNotification(gameID, authData.username(), notification);
     }
+
+//    private void leave(String visitorName) throws IOException {
+//        connections.remove(visitorName);
+//        var message = String.format("%s left the shop", visitorName);
+//        var notification = new Notification(Notification.Type.DEPARTURE, message);
+//        connections.broadcast(visitorName, notification);
+//    }
+
+
+
+//    public void makeNoise(String petName, String sound) throws ResponseException {
+//        try {
+//            var message = String.format("%s says %s", petName, sound);
+//            var notification = new Notification(Notification.Type.NOISE, message);
+//            connections.broadcast("", notification);
+//        } catch (Exception ex) {
+//            throw new ResponseException(500, ex.getMessage());
+//        }
+//    }
 }

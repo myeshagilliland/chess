@@ -6,12 +6,12 @@ import java.io.IOException;
 
 public class Connection {
     public String username;
-    public String role;
+//    public String role;
     public Session session;
 
-    public Connection(String username, String role, Session session) {
+    public Connection(String username, Session session) {
         this.username = username;
-        this.role = role;
+//        this.role = role;
         this.session = session;
     }
 

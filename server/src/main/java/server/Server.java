@@ -2,12 +2,15 @@ package server;
 
 import dataaccess.*;
 import handler.*;
+import server.websocket.WebSocketHandler;
 import service.GameService;
 import service.UserService;
 import spark.*;
 
 public class Server {
 
+    private AuthDAO authDAO;
+    private GameDAO gameDAO;
     private UserService userService;
     private GameService gameService;
 
@@ -17,6 +20,9 @@ public class Server {
         Spark.staticFiles.location("web");
 
         setServices();
+        WebSocketHandler webSocketHandler = new WebSocketHandler(authDAO, gameDAO);
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", new RegisterHandler(userService));
@@ -47,6 +53,8 @@ public class Server {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
         userService = new UserService(userDAO, authDAO, gameDAO);
         gameService = new GameService(userDAO, authDAO, gameDAO);
     }

@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     public final ConcurrentHashMap<Integer, ConcurrentHashMap<String, Connection>> connections = new ConcurrentHashMap<>();
 
-    public void add(int gameID, String username, String role, Session session) {
-        var connection = new Connection(username, role, session);
+    public void add(int gameID, String username, Session session) {
+        var connection = new Connection(username, session);
 //        connections.computeIfAbsent(gameID, k -> new ArrayList<>()).add(connection);
         connections.computeIfAbsent(gameID, k -> new ConcurrentHashMap<>()).put(username, connection);
     }
@@ -59,13 +59,22 @@ public class ConnectionManager {
         }
     }
 
-    public void sendError (int gameID, String username, ErrorMessage errorMessage) throws IOException {
+    public void sendLoadGameRoot (Session session, LoadGameMessage loadGameMessage) throws IOException {
+        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+    }
+
+
+    public void sendError (Session session, ErrorMessage errorMessage) throws IOException {
+//        Connection c = new Connection(null, session);
+//        c.send(new)
+        session.getRemote().sendString(new Gson().toJson(errorMessage));
+
 //        var removeList = new ArrayList<Connection>();
-        Connection c = connections.get(gameID).get(username);
+//        Connection c = connections.get(gameID).get(username);
 //        for (var c : connections.get(gameID).values()) {
 //            if (c.session.isOpen()) {
 //                if (!c.username.equals(excludeUsername)) {
-                    c.send(new Gson().toJson(errorMessage));
+//                    c.send(new Gson().toJson(errorMessage));
 //                }
 //            } else {
 //                removeList.add(c);
