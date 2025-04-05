@@ -1,6 +1,8 @@
 import ui.GameUI;
 import ui.PostLoginUI;
 import ui.PreLoginUI;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -65,6 +67,11 @@ public class Repl {
             }
         }
         System.out.println();
+    }
+
+    public void notify(ServerMessage notification) {
+        System.out.println(SET_TEXT_COLOR_RED + notification.getMessage());
+        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     private void printPrompt(String ui) {

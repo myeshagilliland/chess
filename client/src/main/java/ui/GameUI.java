@@ -48,8 +48,8 @@ public class GameUI {
     }
 
     private String help() {
-        return "move <current position> <final position>: to move a piece\n" +
-                "moves <position> : to highlight legal moves for piece at position\n" +
+        return "move <CURRENT POSITION> <FINAL POSITION>: to move a piece\n" +
+                "moves <POSITION> : to highlight legal moves for piece at position\n" +
                 "redraw : to redisplay current game board\n" +
                 "resign : to forfeit current game\n" +
                 "leave : to leave current game\n" +
