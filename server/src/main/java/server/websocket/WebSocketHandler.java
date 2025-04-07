@@ -241,6 +241,12 @@ public class WebSocketHandler {
             return;
         }
 
+        if (!(teamColor == gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor())) {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: You can only move your own pieces");
+            connections.sendError(session, errorMessage);
+            return;
+        }
+
         if (gameData.chessGame().isOver()) {
             ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Game already over");
             connections.sendError(session, errorMessage);
@@ -265,7 +271,7 @@ public class WebSocketHandler {
         }
 
         var loadGame = new LoadGameMessage(LOAD_GAME, gameData.chessGame());
-        connections.sendLoadGameRoot(session, loadGame);
+        connections.sendLoadGame(gameID, null, loadGame);
 
         ChessPiece.PieceType pieceType = gameData.chessGame().getBoard().getPiece(move.getEndPosition()).getPieceType();
         ChessPosition finalPosition = move.getEndPosition();
@@ -294,7 +300,7 @@ public class WebSocketHandler {
 
         if (!statusMessage.isEmpty()) {
             var notification2 = new NotificationMessage(NOTIFICATION, statusMessage);
-            connections.sendNotification(gameID, authData.username(), notification2);
+            connections.sendNotification(gameID, null, notification2);
         }
     }
 
