@@ -29,7 +29,7 @@ public class ChessGame {
     /**
      * @return whether the game is over or not
      */
-    public boolean isGameOver() {
+    public boolean isOver() {
         return gameOver;
     }
 

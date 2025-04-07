@@ -43,7 +43,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
 //            case MAKE_MOVE -> makeMove(action.visitorName());
             case LEAVE -> leave(command.getAuthToken(), command.getGameID(), session);
-//            case RESIGN -> resign(action.visitorName());
+            case RESIGN -> resign(command.getAuthToken(), command.getGameID(), session);
         }
     }
 
@@ -166,6 +166,18 @@ public class WebSocketHandler {
             return;
         }
 
+        if (!Objects.equals(authData.username(), gameData.whiteUsername()) &&
+                !Objects.equals(authData.username(), gameData.blackUsername())) {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Observer may not resign");
+            connections.sendError(session, errorMessage);
+            return;
+        }
+
+        if (gameData.chessGame().isOver()) {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Game already over");
+            connections.sendError(session, errorMessage);
+            return;
+        }
 
         gameData.chessGame().endGame();
 
