@@ -3,6 +3,9 @@ package websocket;
 import com.google.gson.Gson;
 import exception.ServiceException;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -27,7 +30,14 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+//                    ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+                    ServerMessage notification = serverMessage;
+                    switch (serverMessage.getServerMessageType()) {
+                        case NOTIFICATION -> notification = new Gson().fromJson(message, NotificationMessage.class);
+                        case LOAD_GAME -> notification = new Gson().fromJson(message, LoadGameMessage.class);
+                        case ERROR -> notification = new Gson().fromJson(message, ErrorMessage.class);
+                    }
                     notificationHandler.notify(notification);
                 }
             });
@@ -41,14 +51,14 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-//    public void enterPetShop(String visitorName) throws ServiceException {
-//        try {
-//            var action = new UserGameCommand(UserGameCommand.CommandType.ENTER, visitorName);
-//            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//        } catch (IOException ex) {
-//            throw new ServiceException(ex.getMessage());
-//        }
-//    }
+    public void connect(String authToken, int gameID) throws ServiceException {
+        try {
+            var connectCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(connectCommand));
+        } catch (IOException ex) {
+            throw new ServiceException(ex.getMessage());
+        }
+    }
 //
 //    public void leavePetShop(String visitorName) throws ServiceException {
 //        try {

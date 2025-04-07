@@ -46,7 +46,6 @@ public class WebSocketHandler {
         } else {
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
-//            case MAKE_MOVE -> makeMove(command.getMove(), command.getAuthToken(), command.getGameID(), session);
                 case LEAVE -> leave(command.getAuthToken(), command.getGameID(), session);
                 case RESIGN -> resign(command.getAuthToken(), command.getGameID(), session);
             }
@@ -195,7 +194,7 @@ public class WebSocketHandler {
             return;
         }
 
-        var message = String.format("GAME OVER\n%s has resigned", authData.username());
+        var message = String.format("GAME OVER: %s has resigned", authData.username());
         var notification = new NotificationMessage(NOTIFICATION, message);
         connections.sendNotification(gameID, null, notification);
     }
@@ -229,12 +228,15 @@ public class WebSocketHandler {
 
         ChessGame.TeamColor teamColor = null;
         ChessGame.TeamColor otherTeamColor = null;
+        String otherUser = null;
         if (Objects.equals(authData.username(), gameData.whiteUsername())) {
             teamColor = ChessGame.TeamColor.WHITE;
             otherTeamColor = ChessGame.TeamColor.BLACK;
+            otherUser = gameData.blackUsername();
         } else if (Objects.equals(authData.username(), gameData.blackUsername())) {
             teamColor = ChessGame.TeamColor.BLACK;
             otherTeamColor = ChessGame.TeamColor.WHITE;
+            otherUser = gameData.whiteUsername();
         } else {
             ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Observer may not move");
             connections.sendError(session, errorMessage);
@@ -275,19 +277,19 @@ public class WebSocketHandler {
 
         ChessPiece.PieceType pieceType = gameData.chessGame().getBoard().getPiece(move.getEndPosition()).getPieceType();
         ChessPosition finalPosition = move.getEndPosition();
-        var message = String.format("%s %s moved to %s", teamColor, pieceType, finalPosition);
+        var message = String.format("%s moved %s %s to %s", authData.username(), teamColor, pieceType, finalPosition);
         var notification = new NotificationMessage(NOTIFICATION, message);
         connections.sendNotification(gameID, authData.username(), notification);
 
         String statusMessage = "";
         if (gameData.chessGame().isInCheck(otherTeamColor)) {
-            statusMessage = String.format("%s is in check", otherTeamColor);
+            statusMessage = String.format("%s is in check", otherUser);
         } else if (gameData.chessGame().isInCheckmate(otherTeamColor)) {
             gameData.chessGame().endGame();
-            statusMessage = String.format("GAME OVER: %s is in check mate\n%s wins!", otherTeamColor, authData.username());
+            statusMessage = String.format("GAME OVER: %s is in check mate. %s wins!", otherUser, authData.username());
         } else if (gameData.chessGame().isInStalemate(otherTeamColor)) {
             gameData.chessGame().endGame();
-            statusMessage = String.format("GAME OVER: %s is in check mate\n%s wins!", otherTeamColor, authData.username());
+            statusMessage = String.format("GAME OVER: %s is in check mate. %s wins!", otherUser, authData.username());
         }
 
         try {
@@ -304,22 +306,4 @@ public class WebSocketHandler {
         }
     }
 
-//    private void leave(String visitorName) throws IOException {
-//        connections.remove(visitorName);
-//        var message = String.format("%s left the shop", visitorName);
-//        var notification = new Notification(Notification.Type.DEPARTURE, message);
-//        connections.broadcast(visitorName, notification);
-//    }
-
-
-
-//    public void makeNoise(String petName, String sound) throws ResponseException {
-//        try {
-//            var message = String.format("%s says %s", petName, sound);
-//            var notification = new Notification(Notification.Type.NOISE, message);
-//            connections.broadcast("", notification);
-//        } catch (Exception ex) {
-//            throw new ResponseException(500, ex.getMessage());
-//        }
-//    }
 }
