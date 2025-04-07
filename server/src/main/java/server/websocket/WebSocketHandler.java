@@ -1,7 +1,6 @@
 package server.websocket;
 
-import chess.ChessGame;
-import chess.ChessMove;
+import chess.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -11,8 +10,6 @@ import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import service.GameService;
-import websocket.commands.MakeMoveCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
@@ -229,9 +226,17 @@ public class WebSocketHandler {
             return;
         }
 
-        if (!Objects.equals(authData.username(), gameData.whiteUsername()) &&
-                !Objects.equals(authData.username(), gameData.blackUsername())) {
-            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Observer may not resign");
+
+        ChessGame.TeamColor teamColor = null;
+        ChessGame.TeamColor otherTeamColor = null;
+        if (Objects.equals(authData.username(), gameData.whiteUsername())) {
+            teamColor = ChessGame.TeamColor.WHITE;
+            otherTeamColor = ChessGame.TeamColor.BLACK;
+        } else if (Objects.equals(authData.username(), gameData.blackUsername())) {
+            teamColor = ChessGame.TeamColor.BLACK;
+            otherTeamColor = ChessGame.TeamColor.WHITE;
+        } else {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: Observer may not move");
             connections.sendError(session, errorMessage);
             return;
         }
@@ -242,7 +247,14 @@ public class WebSocketHandler {
             return;
         }
 
-        gameData.chessGame().endGame();
+        try {
+            gameData.chessGame().makeMove(move);
+        } catch (InvalidMoveException e) {
+            var message = String.format("Error: %s", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, message);
+            connections.sendError(session, errorMessage);
+            return;
+        }
 
         try {
             gameDAO.updateGame(gameData);
@@ -252,9 +264,38 @@ public class WebSocketHandler {
             return;
         }
 
-        var message = String.format("GAME OVER\n%s has resigned", authData.username());
+        var loadGame = new LoadGameMessage(LOAD_GAME, gameData.chessGame());
+        connections.sendLoadGameRoot(session, loadGame);
+
+        ChessPiece.PieceType pieceType = gameData.chessGame().getBoard().getPiece(move.getEndPosition()).getPieceType();
+        ChessPosition finalPosition = move.getEndPosition();
+        var message = String.format("%s %s moved to %s", teamColor, pieceType, finalPosition);
         var notification = new NotificationMessage(NOTIFICATION, message);
-        connections.sendNotification(gameID, null, notification);
+        connections.sendNotification(gameID, authData.username(), notification);
+
+        String statusMessage = "";
+        if (gameData.chessGame().isInCheck(otherTeamColor)) {
+            statusMessage = String.format("%s is in check", otherTeamColor);
+        } else if (gameData.chessGame().isInCheckmate(otherTeamColor)) {
+            gameData.chessGame().endGame();
+            statusMessage = String.format("GAME OVER: %s is in check mate\n%s wins!", otherTeamColor, authData.username());
+        } else if (gameData.chessGame().isInStalemate(otherTeamColor)) {
+            gameData.chessGame().endGame();
+            statusMessage = String.format("GAME OVER: %s is in check mate\n%s wins!", otherTeamColor, authData.username());
+        }
+
+        try {
+            gameDAO.updateGame(gameData);
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, e.getMessage());
+            connections.sendError(session, errorMessage);
+            return;
+        }
+
+        if (!statusMessage.isEmpty()) {
+            var notification2 = new NotificationMessage(NOTIFICATION, statusMessage);
+            connections.sendNotification(gameID, authData.username(), notification2);
+        }
     }
 
 //    private void leave(String visitorName) throws IOException {
