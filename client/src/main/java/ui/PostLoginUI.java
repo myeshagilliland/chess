@@ -102,7 +102,7 @@ public class PostLoginUI {
                 return "Player color already taken. Please try again.\n" + list();
             }
         }
-        gameUI = new GameUI(port, notificationHandler, serverFacade, createdGames, game, playerColor, authToken);
+        gameUI = new GameUI(port, notificationHandler, game, playerColor, authToken);
         return "Game started";
     }
 
@@ -117,7 +117,7 @@ public class PostLoginUI {
             return "Invalid game number. Please choose a game from this list: \n" + list();
         }
         var game = createdGames.get(params[0]);
-        gameUI = new GameUI(port, notificationHandler, serverFacade, createdGames, game, "white", authToken);
+        gameUI = new GameUI(port, notificationHandler, game, "white", authToken);
         return "Game started";
     }
 

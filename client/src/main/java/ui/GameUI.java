@@ -4,27 +4,22 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import exception.ServiceException;
-import facade.ServerFacade;
 import model.GameData;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 public class GameUI {
-    private ServerFacade serverFacade;
     private WebSocketFacade webSocketFacade;
     private GameData gameData;
     private ChessGame chessGame;
     private String playerColor;
-    private HashMap<String, GameData> createdGames;
     private String authToken;
-    private static final Map<String, Integer> moveConverter = Map.of(
+    private static final Map<String, Integer> MOVE_CONVERTER = Map.of(
             "a", 1,
             "b", 2,
             "c", 3,
@@ -35,30 +30,25 @@ public class GameUI {
             "h", 8
     );
 
-    public GameUI(int port, NotificationHandler notificationHandler, ServerFacade serverFacade, HashMap<String, GameData> createdGames, GameData game, String playerColor, String authToken) {
-        this.serverFacade = serverFacade;
-        this.createdGames = createdGames;
+    public GameUI(int port, NotificationHandler nHandler, GameData game, String playerColor, String authToken) {
         this.gameData = game;
         this.playerColor = playerColor;
         this.authToken = authToken;
 
         try {
-            this.webSocketFacade = new WebSocketFacade(port, notificationHandler);
+            this.webSocketFacade = new WebSocketFacade(port, nHandler);
             webSocketFacade.connect(authToken, gameData.gameID(), playerColor);
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
 
         System.out.print(SET_TEXT_COLOR_BLUE + "Game started. Type 'help' to view the menu\n");
-//        new ChessBoardUI(gameData.chessGame(), playerColor).printBoard();
     }
 
     public String executeCommand(String input) {
         var tokens = input.toLowerCase().split(" ");
         var cmd = tokens[0];
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-
-//        try {
             return switch (cmd) {
                 case "help" -> help();
                 case "redraw" -> redraw();
@@ -69,9 +59,6 @@ public class GameUI {
                 case "quit" -> "quit";
                 case null, default -> "Invalid command. Try one of these: \n" + help();
             };
-//        } catch (ServiceException e) {
-//            return "Unexpected error" + e.getErrorMessage() + "\n";
-//        }
     }
 
     private String help() {
@@ -121,7 +108,6 @@ public class GameUI {
 
         try {
             webSocketFacade.makeMove(authToken, gameData.gameID(), move);
-//            gameData.chessGame().makeMove(move);
         } catch (ServiceException e) {
             return "Error: " + e.getMessage();
         }
@@ -138,7 +124,7 @@ public class GameUI {
         }
 
         int row = Character.getNumericValue(position.charAt(1));
-        var col = moveConverter.get(String.valueOf(position.charAt(0)));
+        var col = MOVE_CONVERTER.get(String.valueOf(position.charAt(0)));
 
         if (row > 8 || row < 1 || col == null) {
             throw serviceException;
@@ -148,7 +134,6 @@ public class GameUI {
     }
 
     private String redraw() {
-//        ChessGame game = NotificationHandler.getGame();
         new ChessBoardUI(chessGame, playerColor).printBoard();
         return "";
     }
@@ -165,8 +150,6 @@ public class GameUI {
         } catch (ServiceException e) {
             return e.getErrorMessage();
         }
-
-//        if (chessGame.)
 
         new ChessBoardUI(chessGame, playerColor).highlightMoves(position);
         return "";

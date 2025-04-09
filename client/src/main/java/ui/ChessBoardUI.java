@@ -53,15 +53,10 @@ public class ChessBoardUI {
     }
 
     public static void highlightMoves(ChessPosition position) {
-//        if (board.getPiece(position) == null) { // || board.getPiece(position).getTeamColor() != playerColor) {
-//            System.out.println("Error: no piece at position");
-//        }
-
         Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
         HashMap<Integer, ArrayList<Integer>> possiblePositions = new HashMap<>();
         for (ChessMove move : moves) {
             ChessPosition pos = move.getEndPosition();
-//            connections.computeIfAbsent(gameID, k -> new ConcurrentHashMap<>()).put(username, connection);
             possiblePositions.computeIfAbsent(pos.getRow(), k -> new ArrayList<>()).add(pos.getColumn());
         }
 
