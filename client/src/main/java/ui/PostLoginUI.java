@@ -5,6 +5,7 @@ import model.GameData;
 import requestresult.CreateGameResult;
 import requestresult.ListGamesResult;
 import facade.ServerFacade;
+import websocket.NotificationHandler;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,13 +14,17 @@ import static ui.EscapeSequences.*;
 
 public class PostLoginUI {
 
+    private int port;
     private ServerFacade serverFacade;
+    private NotificationHandler notificationHandler;
     private GameUI gameUI;
     private String authToken;
     private HashMap<String, GameData> createdGames = new HashMap<>();
 
-    public PostLoginUI(ServerFacade serverFacade, String authToken) {
+    public PostLoginUI(int port, ServerFacade serverFacade, NotificationHandler notificationHandler, String authToken) {
+        this.port = port;
         this.serverFacade = serverFacade;
+        this.notificationHandler = notificationHandler;
         this.authToken = authToken;
 
         System.out.print(SET_TEXT_COLOR_BLUE + "Successfully logged in. Type 'help' to view the menu\n");
@@ -97,7 +102,7 @@ public class PostLoginUI {
                 return "Player color already taken. Please try again.\n" + list();
             }
         }
-        gameUI = new GameUI(serverFacade, createdGames, game.chessGame(), playerColor);
+        gameUI = new GameUI(port, notificationHandler, serverFacade, createdGames, game, playerColor, authToken);
         return "Game started";
     }
 
@@ -111,7 +116,7 @@ public class PostLoginUI {
             return "Invalid game number. Please choose a game from this list: \n" + list();
         }
         var game = createdGames.get(params[0]);
-        new ChessBoardUI(game.chessGame(), "white");
+        new ChessBoardUI(game.chessGame(), "white"); //FIX THIS!!!!!!!!!
         return "";
     }
 

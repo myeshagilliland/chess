@@ -25,8 +25,6 @@ import static websocket.messages.ServerMessage.ServerMessageType.*;
 @WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
-//    private final UserService
-//    private final GameService gameService;
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
     private ArrayList<Integer> inactiveGames = new ArrayList<>();

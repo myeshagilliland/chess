@@ -4,6 +4,7 @@ import exception.ServiceException;
 import requestresult.LoginResult;
 import requestresult.RegisterResult;
 import facade.ServerFacade;
+import websocket.NotificationHandler;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -11,11 +12,15 @@ import static ui.EscapeSequences.*;
 
 public class PreLoginUI {
 
-    ServerFacade serverFacade;
-    PostLoginUI postLoginUI;
+    private int port;
+    private ServerFacade serverFacade;
+    private PostLoginUI postLoginUI;
+    private NotificationHandler notificationHandler;
 
-    public PreLoginUI(int port) {
+    public PreLoginUI(int port, NotificationHandler notificationHandler) {
+        this.port = port;
         this.serverFacade = new ServerFacade(port);
+        this.notificationHandler = notificationHandler;
 
         try {
             serverFacade.clear();
@@ -66,7 +71,7 @@ public class PreLoginUI {
                 return "Username already taken. Please try again\n";
             }
         }
-        postLoginUI = new PostLoginUI(serverFacade, registerData.authToken());
+        postLoginUI = new PostLoginUI(port, serverFacade, notificationHandler, registerData.authToken());
         return "Logged in";
     }
 
@@ -83,7 +88,7 @@ public class PreLoginUI {
                 return "User not registered. Please try again.\n";
             }
         }
-        postLoginUI = new PostLoginUI(serverFacade, loginData.authToken());
+        postLoginUI = new PostLoginUI(port, serverFacade, notificationHandler, loginData.authToken());
         return "Logged in";
     }
 

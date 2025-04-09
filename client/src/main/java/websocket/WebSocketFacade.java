@@ -1,7 +1,9 @@
 package websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ServiceException;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -12,14 +14,15 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 public class WebSocketFacade extends Endpoint {
     Session session;
     NotificationHandler notificationHandler;
 
-    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ServiceException {
+    public WebSocketFacade(int port, NotificationHandler notificationHandler) throws ServiceException {
         try {
-            url = url.replace("http", "ws");
+            String url = String.format("ws://localhost:%d", port);
             URI socketURI = new URI(url + "/ws");
             this.notificationHandler = notificationHandler;
 
@@ -31,14 +34,13 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-//                    ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
-                    ServerMessage notification = serverMessage;
+//                    ServerMessage notification = serverMessage;
                     switch (serverMessage.getServerMessageType()) {
-                        case NOTIFICATION -> notification = new Gson().fromJson(message, NotificationMessage.class);
-                        case LOAD_GAME -> notification = new Gson().fromJson(message, LoadGameMessage.class);
-                        case ERROR -> notification = new Gson().fromJson(message, ErrorMessage.class);
+                        case NOTIFICATION -> notificationHandler.sendNotification(new Gson().fromJson(message, NotificationMessage.class));
+                        case LOAD_GAME -> notificationHandler.sendLoadGame(new Gson().fromJson(message, LoadGameMessage.class));
+                        case ERROR -> notificationHandler.sendError(new Gson().fromJson(message, ErrorMessage.class));
                     }
-                    notificationHandler.notify(notification);
+//                    notificationHandler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -59,15 +61,32 @@ public class WebSocketFacade extends Endpoint {
             throw new ServiceException(ex.getMessage());
         }
     }
-//
-//    public void leavePetShop(String visitorName) throws ServiceException {
-//        try {
-////            var action = new UserGameCommand(UserGameCommand.CommandType.EXIT, visitorName);
-//            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//            this.session.close();
-//        } catch (IOException ex) {
-//            throw new ServiceException(ex.getMessage());
-//        }
-//    }
+
+    public void leave(String authToken, int gameID) throws ServiceException {
+        try {
+            var leaveCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(leaveCommand));
+        } catch (IOException ex) {
+            throw new ServiceException(ex.getMessage());
+        }
+    }
+
+    public void resign(String authToken, int gameID) throws ServiceException {
+        try {
+            var resignCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(resignCommand));
+        } catch (IOException ex) {
+            throw new ServiceException(ex.getMessage());
+        }
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws ServiceException {
+        try {
+            var makeMoveCommand = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
+            this.session.getBasicRemote().sendText(new Gson().toJson(makeMoveCommand));
+        } catch (IOException ex) {
+            throw new ServiceException(ex.getMessage());
+        }
+    }
 
 }
