@@ -15,7 +15,6 @@ public class ConnectionManager {
 
     public void add(int gameID, String username, Session session) {
         var connection = new Connection(username, session);
-//        connections.computeIfAbsent(gameID, k -> new ArrayList<>()).add(connection);
         connections.computeIfAbsent(gameID, k -> new ConcurrentHashMap<>()).put(username, connection);
     }
 
@@ -65,44 +64,7 @@ public class ConnectionManager {
 
 
     public void sendError (Session session, ErrorMessage errorMessage) throws IOException {
-//        Connection c = new Connection(null, session);
-//        c.send(new)
         session.getRemote().sendString(new Gson().toJson(errorMessage));
-
-//        var removeList = new ArrayList<Connection>();
-//        Connection c = connections.get(gameID).get(username);
-//        for (var c : connections.get(gameID).values()) {
-//            if (c.session.isOpen()) {
-//                if (!c.username.equals(excludeUsername)) {
-//                    c.send(new Gson().toJson(errorMessage));
-//                }
-//            } else {
-//                removeList.add(c);
-//            }
-//        }
-
-        // Clean up any connections that were left open.
-//        for (var c : removeList) {
-//            connections.get(gameID).remove(c.username);
-//        }
     }
 
-
-//    public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
-//        var removeList = new ArrayList<Connection>();
-//        for (var c : connections.values()) {
-//            if (c.session.isOpen()) {
-//                if (!c.visitorName.equals(excludeVisitorName)) {
-//                    c.send(notification.toString());
-//                }
-//            } else {
-//                removeList.add(c);
-//            }
-//        }
-//
-//        // Clean up any connections that were left open.
-//        for (var c : removeList) {
-//            connections.remove(c.visitorName);
-//        }
-//    }
 }

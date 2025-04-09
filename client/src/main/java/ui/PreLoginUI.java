@@ -21,12 +21,6 @@ public class PreLoginUI {
         this.port = port;
         this.serverFacade = new ServerFacade(port);
         this.notificationHandler = notificationHandler;
-
-//        try {
-//            serverFacade.clear();
-//        } catch (ServiceException e) {
-//            System.out.println("Unable to clear database");
-//        }
     }
 
     public String executeCommand(String input) {
