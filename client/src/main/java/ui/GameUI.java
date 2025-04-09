@@ -44,7 +44,7 @@ public class GameUI {
 
         try {
             this.webSocketFacade = new WebSocketFacade(port, notificationHandler);
-            webSocketFacade.connect(authToken, gameData.gameID());
+            webSocketFacade.connect(authToken, gameData.gameID(), playerColor);
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
@@ -131,7 +131,7 @@ public class GameUI {
 
     private ChessPosition getChessPosition(String position) throws ServiceException {
         ServiceException serviceException = new ServiceException("Please enter a valid position\n" +
-                "Example: move a1 a2\n");
+                "Example: a1\n");
 
         if (position.length() != 2) {
             throw serviceException;
@@ -155,7 +155,7 @@ public class GameUI {
 
     private String moves(String[] params) {
         if (params.length != 1) {
-            return "Please enter valid position see possible moves\n" +
+            return "Please enter a position see possible moves\n" +
                     "Example: move a1\n";
         }
 

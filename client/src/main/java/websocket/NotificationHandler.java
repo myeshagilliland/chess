@@ -9,6 +9,6 @@ import websocket.messages.ServerMessage;
 public interface NotificationHandler {
     void sendNotification(NotificationMessage message);
     void sendError(ErrorMessage error);
-    void sendLoadGame(LoadGameMessage loadGameMessage);
+    void sendLoadGame(LoadGameMessage loadGameMessage, String playerColor);
 //    ChessGame getGame();
 }

@@ -77,24 +77,24 @@ public class Repl implements NotificationHandler {
     }
 
     public void sendNotification(NotificationMessage notification) {
-        System.out.println();
-        System.out.println(SET_TEXT_COLOR_RED + notification.getMessage());
+//        System.out.println();
+        System.out.println(SET_TEXT_COLOR_YELLOW + notification.getMessage());
         printPrompt("game");
 //        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     public void sendError(ErrorMessage error) {
-        System.out.println();
+//        System.out.println();
         System.out.println(SET_TEXT_COLOR_RED + error.getMessage());
         printPrompt("game");
 //        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
-    public void sendLoadGame(LoadGameMessage loadGameMessage) {
+    public void sendLoadGame(LoadGameMessage loadGameMessage, String playerColor) {
 //        game = loadGameMessage.getGame();
         gameUI.updateGame(loadGameMessage.getGame());
         System.out.println();
-        new ChessBoardUI(loadGameMessage.getGame(), "white").printBoard(); //FIX THIS!!!
+        new ChessBoardUI(loadGameMessage.getGame(), playerColor).printBoard(); //FIX THIS!!!
         printPrompt("game");
 //        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }

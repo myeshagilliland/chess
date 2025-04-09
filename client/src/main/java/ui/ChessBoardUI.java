@@ -147,7 +147,13 @@ public class ChessBoardUI {
             if (possiblePositions != null && playerColor.equalsIgnoreCase("white")) {
                 positions = possiblePositions.get(8-(boardRow));
             } else if (possiblePositions != null && playerColor.equalsIgnoreCase("black")) {
-                positions = possiblePositions.get(boardRow+1);
+                ArrayList<Integer> unfixedPositions = possiblePositions.get(boardRow+1);
+                if (unfixedPositions != null) {
+                    positions = new ArrayList<>();
+                    for (Integer pos : unfixedPositions) {
+                        positions.add(8-(pos-1));
+                    }
+                }
             }
 
             if (playerColor.equalsIgnoreCase("white")) {

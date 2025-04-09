@@ -14,11 +14,11 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 public class WebSocketFacade extends Endpoint {
     Session session;
     NotificationHandler notificationHandler;
+    String playerColor;
 
     public WebSocketFacade(int port, NotificationHandler notificationHandler) throws ServiceException {
         try {
@@ -37,7 +37,7 @@ public class WebSocketFacade extends Endpoint {
 //                    ServerMessage notification = serverMessage;
                     switch (serverMessage.getServerMessageType()) {
                         case NOTIFICATION -> notificationHandler.sendNotification(new Gson().fromJson(message, NotificationMessage.class));
-                        case LOAD_GAME -> notificationHandler.sendLoadGame(new Gson().fromJson(message, LoadGameMessage.class));
+                        case LOAD_GAME -> notificationHandler.sendLoadGame(new Gson().fromJson(message, LoadGameMessage.class), playerColor);
                         case ERROR -> notificationHandler.sendError(new Gson().fromJson(message, ErrorMessage.class));
                     }
 //                    notificationHandler.notify(notification);
@@ -53,7 +53,9 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void connect(String authToken, int gameID) throws ServiceException {
+    public void connect(String authToken, int gameID, String playerColor) throws ServiceException {
+        this.playerColor = playerColor;
+
         try {
             var connectCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(connectCommand));

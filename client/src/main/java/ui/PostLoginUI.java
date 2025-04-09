@@ -116,8 +116,9 @@ public class PostLoginUI {
             return "Invalid game number. Please choose a game from this list: \n" + list();
         }
         var game = createdGames.get(params[0]);
-        new ChessBoardUI(game.chessGame(), "white"); //FIX THIS!!!!!!!!!
-        return "";
+//        new ChessBoardUI(game.chessGame(), "white"); //FIX THIS!!!!!!!!!
+        gameUI = new GameUI(port, notificationHandler, serverFacade, createdGames, game, "white", authToken);
+        return "Game started";
     }
 
     private String gameListToString(ListGamesResult listData) {
