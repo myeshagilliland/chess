@@ -107,6 +107,7 @@ public class PostLoginUI {
     }
 
     private String observe(String[] params) throws ServiceException {
+        list();
         if (params.length != 1 || !params[0].matches("\\d+")) {
             return "Please enter a game number to observer a game\n" +
                     "Example: observe 1\n";
@@ -116,7 +117,6 @@ public class PostLoginUI {
             return "Invalid game number. Please choose a game from this list: \n" + list();
         }
         var game = createdGames.get(params[0]);
-//        new ChessBoardUI(game.chessGame(), "white"); //FIX THIS!!!!!!!!!
         gameUI = new GameUI(port, notificationHandler, serverFacade, createdGames, game, "white", authToken);
         return "Game started";
     }
@@ -125,19 +125,23 @@ public class PostLoginUI {
         //"1 - MyGame, White Player: username, Black Player: AVAILABLE"
         createdGames = new HashMap<String, GameData>();
         String str = "";
+        int gameNumber = 1;
         for (int i = 0; i < listData.games().size(); i++) {
             GameData game = listData.games().get(i);
 
-            str += ((i+1) + " - ");
-            str += (game.gameName() + ", ");
-            if (game.whiteUsername() == null) {
-                str += ("White Player: AVAILABLE, ");
-            } else { str += ("White Player: " + game.whiteUsername() + ", "); }
-            if (game.blackUsername() == null) {
-                str += ("Black Player: AVAILABLE\n");
-            } else { str += ("Black Player: " + game.blackUsername() + "\n"); }
+            if (!game.chessGame().isOver()) {
+                str += ((gameNumber) + " - ");
+                str += (game.gameName() + ", ");
+                if (game.whiteUsername() == null) {
+                    str += ("White Player: AVAILABLE, ");
+                } else { str += ("White Player: " + game.whiteUsername() + ", "); }
+                if (game.blackUsername() == null) {
+                    str += ("Black Player: AVAILABLE\n");
+                } else { str += ("Black Player: " + game.blackUsername() + "\n"); }
 
-            createdGames.put(Integer.toString(i+1), game);
+                createdGames.put(Integer.toString(gameNumber), game);
+                gameNumber++;
+            }
         }
         return str;
     }

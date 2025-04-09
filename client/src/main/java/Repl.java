@@ -29,8 +29,8 @@ public class Repl implements NotificationHandler {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         String ui = "preLogin";
-        printPrompt(ui);
         while (!result.equals("quit")) {
+            printPrompt(ui);
             String line = scanner.nextLine();
 
             try {
@@ -71,7 +71,7 @@ public class Repl implements NotificationHandler {
                 var msg = e.toString();
                 System.out.print(msg);
             }
-            printPrompt(ui);
+//            printPrompt(ui);
         }
         System.out.println();
     }

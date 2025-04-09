@@ -280,14 +280,14 @@ public class WebSocketHandler {
         connections.sendNotification(gameID, authData.username(), notification);
 
         String statusMessage = "";
-        if (gameData.chessGame().isInCheck(otherTeamColor)) {
-            statusMessage = String.format("%s is in check", otherUser);
-        } else if (gameData.chessGame().isInCheckmate(otherTeamColor)) {
+        if (gameData.chessGame().isInCheckmate(otherTeamColor)) {
             gameData.chessGame().endGame();
             statusMessage = String.format("GAME OVER: %s is in check mate. %s wins!", otherUser, authData.username());
         } else if (gameData.chessGame().isInStalemate(otherTeamColor)) {
             gameData.chessGame().endGame();
             statusMessage = String.format("GAME OVER: %s is in check mate. %s wins!", otherUser, authData.username());
+        } else if (gameData.chessGame().isInCheck(otherTeamColor)) {
+            statusMessage = String.format("%s is in check", otherUser);
         }
 
         try {
