@@ -94,7 +94,7 @@ public class Repl implements NotificationHandler {
 //        game = loadGameMessage.getGame();
         gameUI.updateGame(loadGameMessage.getGame());
         System.out.println();
-        new ChessBoardUI(loadGameMessage.getGame(), playerColor).printBoard(); //FIX THIS!!!
+        new ChessBoardUI(loadGameMessage.getGame(), playerColor).printBoard();
         printPrompt("game");
 //        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }

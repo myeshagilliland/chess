@@ -274,7 +274,7 @@ public class WebSocketHandler {
         connections.sendLoadGame(gameID, null, loadGame);
 
         ChessPiece.PieceType pieceType = gameData.chessGame().getBoard().getPiece(move.getEndPosition()).getPieceType();
-        ChessPosition finalPosition = move.getEndPosition();
+        String finalPosition = formatPosition(move.getEndPosition(), teamColor);
         var message = String.format("%s moved %s %s to %s", authData.username(), teamColor, pieceType, finalPosition);
         var notification = new NotificationMessage(NOTIFICATION, message);
         connections.sendNotification(gameID, authData.username(), notification);
@@ -302,6 +302,18 @@ public class WebSocketHandler {
             var notification2 = new NotificationMessage(NOTIFICATION, statusMessage);
             connections.sendNotification(gameID, null, notification2);
         }
+    }
+
+    private String formatPosition(ChessPosition chessPosition, ChessGame.TeamColor teamColor) {
+        String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        String pos;
+        pos = String.format("%s%d", letters[chessPosition.getColumn() - 1], chessPosition.getRow());
+//        if (teamColor == ChessGame.TeamColor.BLACK) {
+//            pos = String.format("%s%d", letters[chessPosition.getColumn() - 1], chessPosition.getRow());
+//        } else {
+//            pos = String.format("%s%d", letters[chessPosition.getColumn() - 1], chessPosition.getRow());
+//        }
+        return pos;
     }
 
 }
