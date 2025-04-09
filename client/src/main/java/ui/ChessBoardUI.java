@@ -1,14 +1,12 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static chess.ChessPiece.PieceType.*;
 import static ui.EscapeSequences.*;
 
@@ -34,7 +32,7 @@ public class ChessBoardUI {
         this.board = game.getBoard();
         this.playerColor = playerColor;
 
-        printBoard();
+//        printBoard();
     }
 
     public static void printBoard() {
@@ -46,12 +44,42 @@ public class ChessBoardUI {
 
         drawHeaders(out);
 
-        drawBoard(out);
+        drawBoard(out, null);
 
         drawHeaders(out);
 
         out.print(RESET_BG_COLOR);
         out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    public static void highlightMoves(ChessPosition position) {
+//        if (board.getPiece(position) == null) { // || board.getPiece(position).getTeamColor() != playerColor) {
+//            System.out.println("Error: no piece at position");
+//        }
+
+        Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
+        HashMap<Integer, ArrayList<Integer>> possiblePositions = new HashMap<>();
+        for (ChessMove move : moves) {
+            ChessPosition pos = move.getEndPosition();
+//            connections.computeIfAbsent(gameID, k -> new ConcurrentHashMap<>()).put(username, connection);
+            possiblePositions.computeIfAbsent(pos.getRow(), k -> new ArrayList<>()).add(pos.getColumn());
+        }
+
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+        setPieceSymbols();
+
+        out.print(ERASE_SCREEN);
+
+        drawHeaders(out);
+
+        drawBoard(out, possiblePositions); //alter
+
+        drawHeaders(out);
+
+        out.print(RESET_BG_COLOR);
+        out.print(SET_TEXT_COLOR_WHITE);
+
     }
 
     private static void setPieceSymbols() {
@@ -108,24 +136,38 @@ public class ChessBoardUI {
         out.print(RESET_BG_COLOR);
     }
 
-    private static void drawBoard(PrintStream out) {
+    private static void drawBoard(PrintStream out, HashMap<Integer, ArrayList<Integer>> possiblePositions) {
 
         String[] rowNumbers = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
         String firstSquareColor = SET_BG_COLOR_WHITE;
 
         for (int boardRow = 0; boardRow < NUM_SQUARES; ++boardRow) {
 
+            ArrayList<Integer> positions = null;
+            if (possiblePositions != null && playerColor.equalsIgnoreCase("white")) {
+                positions = possiblePositions.get(8-(boardRow));
+            } else if (possiblePositions != null && playerColor.equalsIgnoreCase("black")) {
+                ArrayList<Integer> unfixedPositions = possiblePositions.get(boardRow+1);
+                if (unfixedPositions != null) {
+                    positions = new ArrayList<>();
+                    for (Integer pos : unfixedPositions) {
+                        positions.add(8-(pos-1));
+                    }
+                }
+            }
+
             if (playerColor.equalsIgnoreCase("white")) {
-                drawRowOfSquares(out, rowNumbers[8-(boardRow+1)], firstSquareColor, pieceSymbols[boardRow]);
+                drawRowOfSquares(out, rowNumbers[8-(boardRow+1)], firstSquareColor, pieceSymbols[boardRow], positions);
             } else {
-                drawRowOfSquares(out, rowNumbers[boardRow], firstSquareColor, pieceSymbols[boardRow]);
+                drawRowOfSquares(out, rowNumbers[boardRow], firstSquareColor, pieceSymbols[boardRow], positions);
             }
 
             firstSquareColor = switchColor(firstSquareColor);
         }
     }
 
-    private static void drawRowOfSquares(PrintStream out, String rowNumber, String startColor, String[] pieceSymbols) {
+    private static void drawRowOfSquares(PrintStream out, String rowNumber, String startColor,
+                                         String[] pieceSymbols, ArrayList<Integer> positions) {
 
         drawHeader(out, rowNumber);
 
@@ -133,7 +175,16 @@ public class ChessBoardUI {
 
         for (int boardCol = 0; boardCol < NUM_SQUARES; ++boardCol) {
 
-            out.print(squareColor);
+            if (positions != null && positions.contains(boardCol+1)) {
+                if (squareColor.equals(SET_BG_COLOR_WHITE)) {
+                    out.print(SET_BG_COLOR_GREEN);
+                } else {
+                    out.print(SET_BG_COLOR_DARK_GREEN);
+                }
+            } else {
+                out.print(squareColor);
+            }
+
             out.print(pieceSymbols[boardCol]);
 
             squareColor = switchColor(squareColor);

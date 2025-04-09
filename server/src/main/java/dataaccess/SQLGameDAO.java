@@ -46,7 +46,6 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.setInt(1, gameID);
                 ResultSet resultSet = preparedStatement.executeQuery();
                 if (resultSet.next()) {
-                    System.out.println(resultSet.getString("chessGame"));
                     GameData gameData = new GameData(
                             resultSet.getInt("gameID"),
                             resultSet.getString("whiteUsername"),
@@ -78,7 +77,6 @@ public class SQLGameDAO implements GameDAO {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    System.out.println(resultSet.getString("chessGame"));
                     GameData gameData = new GameData(
                             resultSet.getInt("gameID"),
                             resultSet.getString("whiteUsername"),

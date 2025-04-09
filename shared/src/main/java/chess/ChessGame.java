@@ -17,12 +17,27 @@ public class ChessGame {
     private Collection<ChessPosition> blackPiecePositions = new ArrayList<ChessPosition>();
     private ChessPosition whiteKingPosition;
     private ChessPosition blackKingPosition;
+    private boolean gameOver = false;
 
     public ChessGame() {
        ChessBoard defaultBoard = new ChessBoard();
        defaultBoard.resetBoard();
        setBoard(defaultBoard);
        setTeamTurn(TeamColor.WHITE);
+    }
+
+    /**
+     * @return whether the game is over or not
+     */
+    public boolean isOver() {
+        return gameOver;
+    }
+
+    /**
+     * End game
+     */
+    public void endGame() {
+        this.gameOver = true;
     }
 
     /**

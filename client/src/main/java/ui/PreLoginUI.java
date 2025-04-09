@@ -4,6 +4,7 @@ import exception.ServiceException;
 import requestresult.LoginResult;
 import requestresult.RegisterResult;
 import facade.ServerFacade;
+import websocket.NotificationHandler;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -11,17 +12,21 @@ import static ui.EscapeSequences.*;
 
 public class PreLoginUI {
 
-    ServerFacade serverFacade;
-    PostLoginUI postLoginUI;
+    private int port;
+    private ServerFacade serverFacade;
+    private PostLoginUI postLoginUI;
+    private NotificationHandler notificationHandler;
 
-    public PreLoginUI(int port) {
+    public PreLoginUI(int port, NotificationHandler notificationHandler) {
+        this.port = port;
         this.serverFacade = new ServerFacade(port);
+        this.notificationHandler = notificationHandler;
 
-        try {
-            serverFacade.clear();
-        } catch (ServiceException e) {
-            System.out.println("Unable to clear database");
-        }
+//        try {
+//            serverFacade.clear();
+//        } catch (ServiceException e) {
+//            System.out.println("Unable to clear database");
+//        }
     }
 
     public String executeCommand(String input) {
@@ -38,7 +43,7 @@ public class PreLoginUI {
                 case null, default -> "Invalid command. Try one of these: \n" + help();
             };
         } catch (ServiceException e) {
-            return "Unexpected error" + e.getErrorMessage();
+            return "Unexpected error" + e.getErrorMessage() + "\n";
         }
     }
 
@@ -58,8 +63,15 @@ public class PreLoginUI {
             return "Please enter a username, password, and email to register.\n" +
                     "Example: register username password email\n";
         }
-        RegisterResult registerData = serverFacade.register(params[0], params[1], params[2]);
-        postLoginUI = new PostLoginUI(serverFacade, registerData.authToken());
+        RegisterResult registerData = null;
+        try {
+            registerData = serverFacade.register(params[0], params[1], params[2]);
+        } catch (ServiceException e) {
+            if (Objects.equals(e.getErrorMessage(), "{\"message\": \"Error: Error: already taken\"}")) {
+                return "Username already taken. Please try again\n";
+            }
+        }
+        postLoginUI = new PostLoginUI(port, serverFacade, notificationHandler, registerData.authToken());
         return "Logged in";
     }
 
@@ -76,7 +88,7 @@ public class PreLoginUI {
                 return "User not registered. Please try again.\n";
             }
         }
-        postLoginUI = new PostLoginUI(serverFacade, loginData.authToken());
+        postLoginUI = new PostLoginUI(port, serverFacade, notificationHandler, loginData.authToken());
         return "Logged in";
     }
 
