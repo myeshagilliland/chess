@@ -124,10 +124,6 @@ public class ChessGame {
             throw new InvalidMoveException("Other team's turn");
         }
 
-//        if (isInCheck(team)) {
-//            throw new InvalidMoveException("In check");
-//        }
-
         if (isInCheckmate(team)) {
             throw new InvalidMoveException("In checkmate");
         }
