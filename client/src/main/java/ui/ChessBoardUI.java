@@ -51,7 +51,6 @@ public class ChessBoardUI {
     }
 
     public void highlightMoves(ChessPosition position) {
-//        Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
         Collection<ChessMove> moves = game.validMoves(position);
         HashMap<Integer, ArrayList<Integer>> possiblePositions = new HashMap<>();
         for (ChessMove move : moves) {

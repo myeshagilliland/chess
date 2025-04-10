@@ -99,6 +99,7 @@ public class GameUI {
     private String no() {
         return "";
     }
+
     private String move(String[] params) {
         if (params.length < 2) {
             return "Please enter a start and end position to move\n" +
