@@ -12,10 +12,11 @@ import static ui.EscapeSequences.*;
 
 public class ChessBoardUI {
 
-    private static ChessBoard board = new ChessBoard();
-    private static String playerColor;
+    private ChessBoard board = new ChessBoard();
+    private final ChessGame game;
+    private final String playerColor;
     private static final int NUM_SQUARES = 8;
-    private static String[][] pieceSymbols = new String[8][8];
+    private final String[][] pieceSymbols = new String[8][8];
     private static final Map<ChessPiece.PieceType, String[]> PIECES_KEY = Map.of(
             KING, new String[] {WHITE_KING, BLACK_KING},
             QUEEN, new String[] {WHITE_QUEEN, BLACK_QUEEN},
@@ -27,11 +28,12 @@ public class ChessBoardUI {
 
 
     public ChessBoardUI(ChessGame game, String playerColor) {
+        this.game = game;
         this.board = game.getBoard();
         this.playerColor = playerColor;
     }
 
-    public static void printBoard() {
+    public void printBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         setPieceSymbols();
@@ -48,8 +50,9 @@ public class ChessBoardUI {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    public static void highlightMoves(ChessPosition position) {
-        Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
+    public void highlightMoves(ChessPosition position) {
+//        Collection<ChessMove> moves = board.getPiece(position).pieceMoves(board, position);
+        Collection<ChessMove> moves = game.validMoves(position);
         HashMap<Integer, ArrayList<Integer>> possiblePositions = new HashMap<>();
         for (ChessMove move : moves) {
             ChessPosition pos = move.getEndPosition();
@@ -64,7 +67,7 @@ public class ChessBoardUI {
 
         drawHeaders(out);
 
-        drawBoard(out, possiblePositions); //alter
+        drawBoard(out, possiblePositions);
 
         drawHeaders(out);
 
@@ -73,7 +76,7 @@ public class ChessBoardUI {
 
     }
 
-    private static void setPieceSymbols() {
+    private void setPieceSymbols() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
 
@@ -99,7 +102,7 @@ public class ChessBoardUI {
         }
     }
 
-    private static void drawHeaders(PrintStream out) {
+    private void drawHeaders(PrintStream out) {
 
         String[] headers = { EMPTY, " a ", " b ", " c ", " d ", " e ", " f " , " g ", " h ", EMPTY};
         for (int boardCol = 0; boardCol < NUM_SQUARES + 2; ++boardCol) {
@@ -114,11 +117,11 @@ public class ChessBoardUI {
         out.println();
     }
 
-    private static void drawHeader(PrintStream out, String headerText) {
+    private void drawHeader(PrintStream out, String headerText) {
         printHeaderText(out, headerText);
     }
 
-    private static void printHeaderText(PrintStream out, String player) {
+    private void printHeaderText(PrintStream out, String player) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
 
@@ -127,7 +130,7 @@ public class ChessBoardUI {
         out.print(RESET_BG_COLOR);
     }
 
-    private static void drawBoard(PrintStream out, HashMap<Integer, ArrayList<Integer>> possiblePositions) {
+    private void drawBoard(PrintStream out, HashMap<Integer, ArrayList<Integer>> possiblePositions) {
 
         String[] rowNumbers = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
         String firstSquareColor = SET_BG_COLOR_WHITE;
@@ -157,7 +160,7 @@ public class ChessBoardUI {
         }
     }
 
-    private static void drawRowOfSquares(PrintStream out, String rowNumber, String startColor,
+    private void drawRowOfSquares(PrintStream out, String rowNumber, String startColor,
                                          String[] pieceSymbols, ArrayList<Integer> positions) {
 
         drawHeader(out, rowNumber);

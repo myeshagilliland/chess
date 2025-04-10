@@ -124,9 +124,9 @@ public class ChessGame {
             throw new InvalidMoveException("Other team's turn");
         }
 
-        if (isInCheck(team)) {
-            throw new InvalidMoveException("In check");
-        }
+//        if (isInCheck(team)) {
+//            throw new InvalidMoveException("In check");
+//        }
 
         if (isInCheckmate(team)) {
             throw new InvalidMoveException("In checkmate");
@@ -175,6 +175,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        resetPiecesCollections();
+
         ChessPosition kingPosition;
         Collection<ChessPosition> otherTeamPositions;
         if (teamColor == TeamColor.WHITE) {
@@ -206,6 +208,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        resetPiecesCollections();
 
         Collection<ChessPosition> piecePositions;
         if (teamColor == TeamColor.WHITE) {
@@ -231,6 +234,8 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        resetPiecesCollections();
+
         if (isInCheck(teamColor)) {
             return false;
         }

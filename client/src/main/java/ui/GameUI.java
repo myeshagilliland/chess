@@ -165,6 +165,10 @@ public class GameUI {
             return e.getErrorMessage();
         }
 
+        if (chessGame.getBoard().getPiece(position) == null) {
+            return "No piece at position. Please try again\n";
+        }
+
         new ChessBoardUI(chessGame, playerColor).highlightMoves(position);
         return "";
     }
