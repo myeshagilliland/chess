@@ -199,8 +199,6 @@ public class WebSocketHandler {
             return;
         }
 
-        System.out.println(gameDataM.chessGame().getBoard().getPiece(move.getStartPosition()));
-
         if (gameDataM.chessGame().getBoard().getPiece(move.getStartPosition()) == null) {
             ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: No piece at position");
             connections.sendError(session, errorMessage);

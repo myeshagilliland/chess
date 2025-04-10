@@ -7,7 +7,6 @@ import websocket.NotificationHandler;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -71,35 +70,26 @@ public class Repl implements NotificationHandler {
                 var msg = e.toString();
                 System.out.print(msg);
             }
-//            printPrompt(ui);
         }
         System.out.println();
     }
 
     public void sendNotification(NotificationMessage notification) {
-//        System.out.println();
         System.out.println(SET_TEXT_COLOR_YELLOW + notification.getMessage());
         printPrompt("game");
-//        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     public void sendError(ErrorMessage error) {
-//        System.out.println();
         System.out.println(SET_TEXT_COLOR_RED + error.getMessage());
         printPrompt("game");
-//        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     public void sendLoadGame(LoadGameMessage loadGameMessage, String playerColor) {
-//        game = loadGameMessage.getGame();
         gameUI.updateGame(loadGameMessage.getGame());
-        System.out.println();
+        System.out.print(RESET_TEXT_COLOR + "current board:\n");
         new ChessBoardUI(loadGameMessage.getGame(), playerColor).printBoard();
         printPrompt("game");
-//        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + "[GAME PLAY] >>> " + SET_TEXT_COLOR_GREEN);
     }
-
-//    public ChessGame getGame() {return game;};
 
     private void printPrompt(String ui) {
         String message;

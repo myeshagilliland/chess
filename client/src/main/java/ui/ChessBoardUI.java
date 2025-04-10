@@ -14,9 +14,7 @@ public class ChessBoardUI {
 
     private static ChessBoard board = new ChessBoard();
     private static String playerColor;
-
     private static final int NUM_SQUARES = 8;
-
     private static String[][] pieceSymbols = new String[8][8];
     private static final Map<ChessPiece.PieceType, String[]> PIECES_KEY = Map.of(
             KING, new String[] {WHITE_KING, BLACK_KING},
@@ -31,8 +29,6 @@ public class ChessBoardUI {
     public ChessBoardUI(ChessGame game, String playerColor) {
         this.board = game.getBoard();
         this.playerColor = playerColor;
-
-//        printBoard();
     }
 
     public static void printBoard() {

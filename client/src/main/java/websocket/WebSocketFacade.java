@@ -34,13 +34,11 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-//                    ServerMessage notification = serverMessage;
                     switch (serverMessage.getServerMessageType()) {
                         case NOTIFICATION -> notificationHandler.sendNotification(new Gson().fromJson(message, NotificationMessage.class));
                         case LOAD_GAME -> notificationHandler.sendLoadGame(new Gson().fromJson(message, LoadGameMessage.class), playerColor);
                         case ERROR -> notificationHandler.sendError(new Gson().fromJson(message, ErrorMessage.class));
                     }
-//                    notificationHandler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
