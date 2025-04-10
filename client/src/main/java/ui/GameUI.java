@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ServiceException;
 import model.GameData;
@@ -55,6 +56,8 @@ public class GameUI {
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "resign" -> resign();
+                case "yes" -> yes();
+                case "no" -> no();
                 case "moves" -> moves(params);
                 case "quit" -> "quit";
                 case null, default -> "Invalid command. Try one of these: \n" + help();
@@ -62,7 +65,7 @@ public class GameUI {
     }
 
     private String help() {
-        return "move <CURRENT POSITION> <FINAL POSITION>: to move a piece\n" +
+        return "move <CURRENT POSITION> <FINAL POSITION> <optional: PROMOTION PIECE>: to move a piece\n" +
                 "moves <POSITION> : to highlight legal moves for piece at position\n" +
                 "redraw : to redisplay current game board\n" +
                 "resign : to forfeit current game\n" +
@@ -81,18 +84,30 @@ public class GameUI {
     }
 
     private String resign() {
+        return "Are you sure you want to resign? Type yes/no\n";
+    }
+
+    private String yes() {
         try {
             webSocketFacade.resign(authToken, gameData.gameID());
         } catch (ServiceException e) {
             return "Error: " + e.getErrorMessage();
         }
+        return "Game resumed. Type 'help' to view the menu";
+    }
+
+    private String no() {
         return "";
     }
 
     private String move(String[] params) {
-        if (params.length != 2) {
+        if (params.length < 2) {
             return "Please enter a start and end position to move\n" +
-                    "Example: move a1 a2\n";
+                    "Example: move a1 a2 <optional: PROMOTION PIECE>\n";
+        }
+        ChessPiece.PieceType promotionPiece = null;
+        if (params.length == 3) {
+            promotionPiece = ChessPiece.PieceType.valueOf(params[2].toUpperCase());
         }
 
         ChessPosition startPosition;
@@ -104,7 +119,7 @@ public class GameUI {
             return e.getErrorMessage();
         }
 
-        ChessMove move = new ChessMove(startPosition, endPosition, null); //FIX THIS FOR PAWN
+        ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece); //FIX THIS FOR PAWN
 
         try {
             webSocketFacade.makeMove(authToken, gameData.gameID(), move);
@@ -149,6 +164,10 @@ public class GameUI {
             position = getChessPosition(params[0]);
         } catch (ServiceException e) {
             return e.getErrorMessage();
+        }
+
+        if (chessGame.getBoard().getPiece(position) == null) {
+            return "No piece at position. Please try again\n";
         }
 
         new ChessBoardUI(chessGame, playerColor).highlightMoves(position);

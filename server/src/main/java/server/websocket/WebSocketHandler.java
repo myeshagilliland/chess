@@ -199,6 +199,12 @@ public class WebSocketHandler {
             return;
         }
 
+        if (gameDataM.chessGame().getBoard().getPiece(move.getStartPosition()) == null) {
+            ErrorMessage errorMessage = new ErrorMessage(ERROR, "Error: No piece at position");
+            connections.sendError(session, errorMessage);
+            return;
+        }
+
         ChessGame.TeamColor teamColor = null;
         ChessGame.TeamColor otherTeamColor = null;
         String otherUser = null;
